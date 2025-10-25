@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Layout } from '@common/modules/Layout'
 import { businessRoutes } from '@modules/Business/route.jsx'
 import { DataToolsRoutes } from '@modules/DataTools/route.jsx'
