@@ -1,0 +1,236 @@
+# Data Analysis Workflow
+
+## Overview
+
+Data analysis workflow is the core framework for data analysis projects, covering the complete process from data collection to result presentation. This module will detail the four key stages of data analysis, helping you establish systematic analytical thinking and methods.
+
+## Complete Data Analysis Workflow Example
+
+Learn about the complete data analysis process through practical code examples:
+
+```python
+# Complete data analysis workflow example
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+
+print("=== Complete Data Analysis Workflow ===")
+
+# 1. Data Collection Stage
+print("\n1. Data Collection Stage")
+print("Loading e-commerce user behavior data...")
+
+# Simulate data loading
+data = {
+    'user_id': range(1, 1001),
+    'age': np.random.randint(18, 65, 1000),
+    'gender': np.random.choice(['M', 'F'], 1000),
+    'session_duration': np.random.normal(300, 100, 1000),
+    'page_views': np.random.poisson(5, 1000),
+    'purchase_amount': np.random.exponential(50, 1000),
+    'is_purchased': np.random.choice([0, 1], 1000, p=[0.7, 0.3])
+}
+
+df = pd.DataFrame(data)
+print(f"Data shape: {df.shape}")
+print(f"Data overview:")
+print(df.head())
+
+# 2. Data Processing Stage
+print("\n2. Data Processing Stage")
+print("Data cleaning and preprocessing...")
+
+# Handle outliers
+df = df[df['session_duration'] > 0]
+df = df[df['page_views'] >= 0]
+df = df[df['purchase_amount'] >= 0]
+
+# Create new features
+df['avg_time_per_page'] = df['session_duration'] / df['page_views']
+df['high_value_user'] = (df['purchase_amount'] > df['purchase_amount'].quantile(0.8)).astype(int)
+
+print(f"Processed data shape: {df.shape}")
+print("New features created")
+
+# 3. Data Analysis Stage
+print("\n3. Data Analysis Stage")
+print("Building user purchase behavior prediction model...")
+
+# Prepare features and target variables
+features = ['age', 'session_duration', 'page_views', 'avg_time_per_page']
+X = df[features]
+y = df['is_purchased']
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("\nModel performance evaluation:")
+print(classification_report(y_test, y_pred))
+
+# Feature importance
+feature_importance = pd.DataFrame({
+    'feature': features,
+    'importance': model.feature_importances_
+}).sort_values('importance', ascending=False)
+
+print("\nFeature importance:")
+print(feature_importance)
+
+# 4. Result Presentation Stage
+print("\n4. Result Presentation Stage")
+print("Generating analysis report and visualization...")
+
+# Create visualization
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+fig.suptitle('E-commerce User Behavior Analysis Report', fontsize=16)
+
+# User age distribution
+axes[0, 0].hist(df['age'], bins=20, alpha=0.7, color='skyblue')
+axes[0, 0].set_title('User Age Distribution')
+axes[0, 0].set_xlabel('Age')
+axes[0, 0].set_ylabel('User Count')
+
+# Purchase behavior comparison
+purchase_by_gender = df.groupby('gender')['is_purchased'].mean()
+axes[0, 1].bar(purchase_by_gender.index, purchase_by_gender.values, color=['lightcoral', 'lightblue'])
+axes[0, 1].set_title('Gender Purchase Rate Comparison')
+axes[0, 1].set_ylabel('Purchase Rate')
+
+# Session duration vs purchase relationship
+axes[1, 0].scatter(df['session_duration'], df['purchase_amount'], alpha=0.6)
+axes[1, 0].set_title('Session Duration vs Purchase Amount Relationship')
+axes[1, 0].set_xlabel('Session Duration (seconds)')
+axes[1, 0].set_ylabel('Purchase Amount')
+
+# Feature importance
+axes[1, 1].barh(feature_importance['feature'], feature_importance['importance'])
+axes[1, 1].set_title('Feature Importance')
+axes[1, 1].set_xlabel('Importance')
+
+plt.tight_layout()
+plt.show()
+
+# 5. Business Insights and Recommendations
+print("\n=== Business Insights and Recommendations ===")
+print(f"Total users: {len(df)}")
+print(f"Purchase user ratio: {df['is_purchased'].mean():.2%}")
+print(f"Average purchase amount: {df[df['is_purchased']==1]['purchase_amount'].mean():.2f}")
+print(f"Average session duration: {df['session_duration'].mean():.2f} seconds")
+
+print("\nKey Findings:")
+print("1. Session duration is a key factor in purchase decisions")
+print("2. Page views are positively correlated with purchase probability")
+print("3. Age distribution is relatively uniform with no obvious age preference")
+print("4. Gender has some influence on purchase behavior")
+
+print("\nAction Recommendations:")
+print("1. Optimize page loading speed to extend user session duration")
+print("2. Improve page content to increase page views")
+print("3. Develop differentiated marketing strategies for different gender users")
+print("4. Build user behavior prediction models for precision marketing")
+
+print("\n=== Analysis Complete ===")
+```
+
+## Learning Objectives
+
+Through this module, you will be able to:
+
+- **Master Complete Process**: Understand the complete lifecycle of data analysis projects
+- **Data Collection Skills**: Learn to acquire and initially explore data from various sources
+- **Data Processing Capabilities**: Master data cleaning, transformation, and feature engineering
+- **Analysis Modeling Techniques**: Learn statistical analysis and machine learning modeling
+- **Result Presentation Skills**: Effectively present and explain analysis results
+
+## Core Content
+
+### 1. Data Collection Stage
+
+The first step in data analysis, including:
+
+- **Data Acquisition**: Acquire data from databases, APIs, files, etc.
+- **Data Overview**: Understand basic information and structure of data
+- **Quality Assessment**: Check data completeness and accuracy
+- **Initial Exploration**: Understand data characteristics through statistics and visualization
+
+### 2. Data Processing Stage
+
+Data preprocessing to prepare for analysis:
+
+- **Data Cleaning**: Handle missing values, outliers, and duplicates
+- **Data Transformation**: Type conversion, standardization, normalization
+- **Feature Engineering**: Create new features and variables
+- **Data Splitting**: Train/test set division
+
+### 3. Data Analysis Stage
+
+The core part of the project:
+
+- **Descriptive Analysis**: Statistical summaries and distribution analysis
+- **Exploratory Analysis**: Variable relationships and correlation analysis
+- **Modeling Analysis**: Build prediction and classification models
+- **Model Evaluation**: Performance assessment and result validation
+
+### 4. Result Presentation Stage
+
+Ensure effective communication of analysis results:
+
+- **Data Visualization**: Create clear charts and dashboards
+- **Report Writing**: Structured analysis reports
+- **Result Interpretation**: Business meaning and insights
+- **Action Recommendations**: Recommendations based on analysis results
+
+## Practice Case
+
+E-commerce user behavior analysis project:
+
+1. **Data Collection**: Acquire e-commerce user behavior data
+2. **Data Processing**: Clean and preprocess user data
+3. **Data Analysis**: Build user purchase behavior prediction model
+4. **Result Presentation**: Generate analysis reports and visualizations
+
+## E-commerce User Behavior Data Preview
+
+| User ID | Age | Gender | Session Duration | Page Views | Purchase Amount | Purchased |
+|---------|-----|--------|------------------|------------|-----------------|-----------|
+| U001 | 28 | F | 320 | 8 | 299 | Yes |
+| U002 | 35 | M | 180 | 3 | 0 | No |
+| U003 | 42 | F | 450 | 12 | 599 | Yes |
+| U004 | 25 | M | 120 | 2 | 0 | No |
+| U005 | 38 | F | 380 | 9 | 199 | Yes |
+
+## Learning Path
+
+1. **Overview**: Understand complete data analysis workflow
+2. **Data Collection**: Learn data acquisition and initial exploration
+3. **Data Processing**: Master data cleaning and preprocessing techniques
+4. **Data Analysis**: Learn statistical analysis and modeling methods
+5. **Result Presentation**: Master visualization and reporting skills
+
+## Key Skills
+
+- Data collection and exploration
+- Data cleaning and preprocessing
+- Statistical analysis and modeling
+- Result visualization and interpretation
+
+## Learning Recommendations
+
+- **Project-oriented**: Learn workflow through complete projects
+- **Practice-focused**: Hands-on practice at each stage
+- **Business thinking**: Focus on business value and practical applications
+- **Tool proficiency**: Master various analysis tools
+
+---
+
+*Mastering the complete data analysis workflow will lay a solid foundation for your data analysis career.*

@@ -1,0 +1,192 @@
+# Data Visualization Tools
+
+## Overview
+
+Data visualization is an indispensable part of data analysis. This module will introduce the three most commonly used visualization tools in Python: Matplotlib, Seaborn, and Plotly, helping you choose the most suitable visualization solution based on your needs.
+
+## California Housing Data Visualization Example
+
+Learn about the characteristics of the three visualization tools through practical code examples:
+
+```python
+# California housing data visualization example
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+import pandas as pd
+import numpy as np
+
+# Load California housing data
+df = pd.read_csv('public/data/california_housing.csv')
+
+print("Data overview:")
+print(f"Data shape: {df.shape}")
+print(f"Column names: {list(df.columns)}")
+print("\nFirst 5 rows:")
+print(df.head())
+
+# 1. Matplotlib basic charts
+plt.figure(figsize=(15, 10))
+
+# House price distribution histogram
+plt.subplot(2, 3, 1)
+plt.hist(df['median_house_value'], bins=50, alpha=0.7, color='skyblue')
+plt.title('House Price Distribution - Matplotlib')
+plt.xlabel('Median House Value')
+plt.ylabel('Frequency')
+
+# Income vs house price relationship scatter plot
+plt.subplot(2, 3, 2)
+plt.scatter(df['median_income'], df['median_house_value'], alpha=0.5)
+plt.title('Income vs House Price Relationship - Matplotlib')
+plt.xlabel('Median Income')
+plt.ylabel('Median House Value')
+
+# House age distribution
+plt.subplot(2, 3, 3)
+plt.hist(df['housing_median_age'], bins=30, alpha=0.7, color='lightcoral')
+plt.title('House Age Distribution - Matplotlib')
+plt.xlabel('Median House Age')
+plt.ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
+
+# 2. Seaborn statistical charts
+plt.figure(figsize=(12, 8))
+
+# House price vs income relationship
+plt.subplot(2, 2, 1)
+sns.scatterplot(data=df, x='median_income', y='median_house_value', alpha=0.6)
+plt.title('Income vs House Price Relationship - Seaborn')
+
+# House price distribution by ocean proximity
+plt.subplot(2, 2, 2)
+sns.boxplot(data=df, x='ocean_proximity', y='median_house_value')
+plt.title('House Price Distribution by Ocean Proximity - Seaborn')
+plt.xticks(rotation=45)
+
+# House price vs number of rooms relationship
+plt.subplot(2, 2, 3)
+sns.scatterplot(data=df, x='total_rooms', y='median_house_value', alpha=0.6)
+plt.title('Number of Rooms vs House Price Relationship - Seaborn')
+
+# Correlation heatmap
+plt.subplot(2, 2, 4)
+numeric_cols = df.select_dtypes(include=[np.number]).columns
+corr_matrix = df[numeric_cols].corr()
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title('Numeric Variables Correlation - Seaborn')
+
+plt.tight_layout()
+plt.show()
+
+# 3. Plotly interactive charts
+# Geographic distribution map
+fig1 = px.scatter_mapbox(df.sample(1000), 
+                        lat='latitude', 
+                        lon='longitude',
+                        color='median_house_value',
+                        size='population',
+                        hover_data=['median_income', 'housing_median_age'],
+                        mapbox_style="open-street-map",
+                        title='California Housing Geographic Distribution - Plotly')
+fig1.show()
+
+# 3D scatter plot
+fig2 = px.scatter_3d(df.sample(1000), 
+                     x='median_income', 
+                     y='housing_median_age', 
+                     z='median_house_value',
+                     color='ocean_proximity',
+                     title='Income-Age-House Price 3D Relationship - Plotly')
+fig2.show()
+
+print("\nThree tools characteristics comparison:")
+print("Matplotlib: Fine control, suitable for static charts and basic analysis")
+print("Seaborn: Beautiful styling, suitable for statistical charts and correlation analysis")
+print("Plotly: Strong interactivity, suitable for geographic distribution and 3D visualization")
+```
+
+## Learning Objectives
+
+Through this module, you will be able to:
+
+- **Master Matplotlib Basics**: Learn to use Matplotlib to create various basic charts
+- **Proficient in Seaborn**: Master Seaborn's advanced statistical chart functions
+- **Learn Plotly Interaction**: Create interactive data visualizations
+- **Tool Selection Strategy**: Choose the most suitable visualization tool based on needs
+
+## Core Content
+
+### 1. Matplotlib Basic Plotting
+
+Python's most basic visualization library, providing low-level plotting control:
+
+- **Chart Types**: Line charts, bar charts, scatter plots, pie charts, etc.
+- **Customization Options**: Colors, styles, labels, legends, etc.
+- **Subplot Layout**: Multi-subplot combinations and complex layouts
+- **Save Export**: Save graphics in multiple formats
+
+### 2. Seaborn Statistical Charts
+
+Advanced statistical chart library based on Matplotlib:
+
+- **Statistical Charts**: Distribution plots, correlation plots, regression plots, etc.
+- **Beautiful Styling**: Built-in themes and color schemes
+- **Data Grouping**: Support categorical and grouped visualization
+- **Quick Plotting**: Simplify the creation of complex charts
+
+### 3. Plotly Interactive Visualization
+
+Modern visualization library focused on interactive charts:
+
+- **Interactive Features**: Zoom, hover, filter and other interactive operations
+- **3D Charts**: Support three-dimensional data visualization
+- **Animation Effects**: Time series animation and dynamic charts
+- **Dashboards**: Create complete interactive dashboards
+
+### 4. Tool Comparison and Selection
+
+Choose the most suitable tool through multi-dimensional comparison:
+
+- **Usability**: Learning curve and usage complexity
+- **Customizability**: Graphics customization and style control capabilities
+- **Interactivity**: Interactive features and user experience
+- **Performance**: Rendering speed and memory usage
+
+## California Housing Data Preview
+
+| Longitude | Latitude | House Age | Total Rooms | Total Bedrooms | Population | Households | Median Income | Median House Value | Ocean Proximity |
+|-----------|----------|-----------|-------------|----------------|------------|------------|---------------|-------------------|-----------------|
+| -122.23 | 37.88 | 41.0 | 880.0 | 129.0 | 322.0 | 126.0 | 8.3252 | 452600.0 | NEAR BAY |
+| -122.22 | 37.86 | 21.0 | 7099.0 | 1106.0 | 2401.0 | 1138.0 | 8.3014 | 358500.0 | NEAR BAY |
+| -122.24 | 37.85 | 52.0 | 1467.0 | 190.0 | 496.0 | 177.0 | 7.2574 | 352100.0 | NEAR BAY |
+| -122.25 | 37.85 | 52.0 | 1274.0 | 235.0 | 558.0 | 219.0 | 5.6431 | 341300.0 | NEAR BAY |
+| -122.25 | 37.85 | 52.0 | 1627.0 | 280.0 | 565.0 | 259.0 | 3.8462 | 342200.0 | NEAR BAY |
+
+## Learning Path
+
+1. **Overview**: Understand the characteristics of the three visualization tools
+2. **Matplotlib Basics**: Master basic plotting functions
+3. **Seaborn Advanced**: Learn statistical chart creation
+4. **Plotly Interactive**: Create interactive visualizations
+5. **Tool Comparison**: Choose the most suitable tool
+
+## Key Skills
+
+- Chart type selection
+- Data visualization design
+- Interactive chart creation
+- Tool performance optimization
+
+## Learning Recommendations
+
+- **Comparative Learning**: Learn all three tools simultaneously to understand their respective advantages
+- **Practice-focused**: Master skills through extensive chart practice
+- **Design Thinking**: Focus on chart aesthetics and readability
+- **Scenario-oriented**: Choose appropriate tools based on application scenarios
+
+---
+
+*Mastering these visualization tools will provide powerful support for presenting and communicating data analysis results.*

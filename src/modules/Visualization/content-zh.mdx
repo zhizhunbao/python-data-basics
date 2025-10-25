@@ -1,0 +1,192 @@
+# 数据可视化工具
+
+## 概述
+
+数据可视化是数据分析中不可或缺的一环。本模块将介绍 Python 中最常用的三种可视化工具：Matplotlib、Seaborn 和 Plotly，帮助您根据需求选择最适合的可视化方案。
+
+## 加利福尼亚房产数据可视化示例
+
+通过实际代码示例了解三种可视化工具的特点：
+
+```python
+# 加利福尼亚房产数据可视化示例
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+import pandas as pd
+import numpy as np
+
+# 加载加利福尼亚房产数据
+df = pd.read_csv('public/data/california_housing.csv')
+
+print("数据概览:")
+print(f"数据形状: {df.shape}")
+print(f"列名: {list(df.columns)}")
+print("\n前5行数据:")
+print(df.head())
+
+# 1. Matplotlib 基础图表
+plt.figure(figsize=(15, 10))
+
+# 房价分布直方图
+plt.subplot(2, 3, 1)
+plt.hist(df['median_house_value'], bins=50, alpha=0.7, color='skyblue')
+plt.title('房价分布 - Matplotlib')
+plt.xlabel('中位房价')
+plt.ylabel('频次')
+
+# 收入与房价关系散点图
+plt.subplot(2, 3, 2)
+plt.scatter(df['median_income'], df['median_house_value'], alpha=0.5)
+plt.title('收入与房价关系 - Matplotlib')
+plt.xlabel('中位收入')
+plt.ylabel('中位房价')
+
+# 房屋年龄分布
+plt.subplot(2, 3, 3)
+plt.hist(df['housing_median_age'], bins=30, alpha=0.7, color='lightcoral')
+plt.title('房屋年龄分布 - Matplotlib')
+plt.xlabel('房屋中位年龄')
+plt.ylabel('频次')
+
+plt.tight_layout()
+plt.show()
+
+# 2. Seaborn 统计图表
+plt.figure(figsize=(12, 8))
+
+# 房价与收入关系
+plt.subplot(2, 2, 1)
+sns.scatterplot(data=df, x='median_income', y='median_house_value', alpha=0.6)
+plt.title('收入与房价关系 - Seaborn')
+
+# 不同海洋距离的房价分布
+plt.subplot(2, 2, 2)
+sns.boxplot(data=df, x='ocean_proximity', y='median_house_value')
+plt.title('不同海洋距离的房价分布 - Seaborn')
+plt.xticks(rotation=45)
+
+# 房价与房间数关系
+plt.subplot(2, 2, 3)
+sns.scatterplot(data=df, x='total_rooms', y='median_house_value', alpha=0.6)
+plt.title('房间数与房价关系 - Seaborn')
+
+# 相关性热力图
+plt.subplot(2, 2, 4)
+numeric_cols = df.select_dtypes(include=[np.number]).columns
+corr_matrix = df[numeric_cols].corr()
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title('数值变量相关性 - Seaborn')
+
+plt.tight_layout()
+plt.show()
+
+# 3. Plotly 交互式图表
+# 地理分布图
+fig1 = px.scatter_mapbox(df.sample(1000), 
+                        lat='latitude', 
+                        lon='longitude',
+                        color='median_house_value',
+                        size='population',
+                        hover_data=['median_income', 'housing_median_age'],
+                        mapbox_style="open-street-map",
+                        title='加利福尼亚房产地理分布 - Plotly')
+fig1.show()
+
+# 3D散点图
+fig2 = px.scatter_3d(df.sample(1000), 
+                     x='median_income', 
+                     y='housing_median_age', 
+                     z='median_house_value',
+                     color='ocean_proximity',
+                     title='收入-年龄-房价 3D关系图 - Plotly')
+fig2.show()
+
+print("\n三种工具特点对比:")
+print("Matplotlib: 精细控制，适合静态图表和基础分析")
+print("Seaborn: 美观样式，适合统计图表和相关性分析")
+print("Plotly: 交互性强，适合地理分布和3D可视化")
+```
+
+## 学习目标
+
+通过本模块的学习，您将能够：
+
+- **掌握 Matplotlib 基础**：学会使用 Matplotlib 创建各种基础图表
+- **熟练使用 Seaborn**：掌握 Seaborn 的高级统计图表功能
+- **学会 Plotly 交互**：创建交互式数据可视化
+- **工具选择策略**：根据需求选择最适合的可视化工具
+
+## 核心内容
+
+### 1. Matplotlib 基础绘图
+
+Python 最基础的可视化库，提供底层绘图控制：
+
+- **图表类型**：折线图、柱状图、散点图、饼图等
+- **定制选项**：颜色、样式、标签、图例等
+- **子图布局**：多子图组合和复杂布局
+- **保存导出**：多种格式的图形保存
+
+### 2. Seaborn 统计图表
+
+基于 Matplotlib 的高级统计图表库：
+
+- **统计图表**：分布图、相关性图、回归图等
+- **美观样式**：内置主题和配色方案
+- **数据分组**：支持分类和分组可视化
+- **快速绘图**：简化复杂图表的创建过程
+
+### 3. Plotly 交互式可视化
+
+现代的可视化库，专注于交互式图表：
+
+- **交互功能**：缩放、悬停、筛选等交互操作
+- **3D 图表**：支持三维数据可视化
+- **动画效果**：时间序列动画和动态图表
+- **仪表板**：创建完整的交互式仪表板
+
+### 4. 工具对比与选择
+
+通过多维度对比，选择最适合的工具：
+
+- **易用性**：学习曲线和使用复杂度
+- **定制性**：图形定制和样式控制能力
+- **交互性**：交互功能和用户体验
+- **性能**：渲染速度和内存使用
+
+## 加利福尼亚房产数据预览
+
+| 经度 | 纬度 | 房屋年龄 | 总房间数 | 总卧室数 | 人口数 | 家庭数 | 中位收入 | 中位房价 | 海洋距离 |
+|------|------|----------|----------|----------|--------|--------|----------|----------|----------|
+| -122.23 | 37.88 | 41.0 | 880.0 | 129.0 | 322.0 | 126.0 | 8.3252 | 452600.0 | NEAR BAY |
+| -122.22 | 37.86 | 21.0 | 7099.0 | 1106.0 | 2401.0 | 1138.0 | 8.3014 | 358500.0 | NEAR BAY |
+| -122.24 | 37.85 | 52.0 | 1467.0 | 190.0 | 496.0 | 177.0 | 7.2574 | 352100.0 | NEAR BAY |
+| -122.25 | 37.85 | 52.0 | 1274.0 | 235.0 | 558.0 | 219.0 | 5.6431 | 341300.0 | NEAR BAY |
+| -122.25 | 37.85 | 52.0 | 1627.0 | 280.0 | 565.0 | 259.0 | 3.8462 | 342200.0 | NEAR BAY |
+
+## 学习路径
+
+1. **概览**：了解三种可视化工具的特点
+2. **Matplotlib 基础**：掌握基础绘图功能
+3. **Seaborn 高级**：学习统计图表绘制
+4. **Plotly 交互**：创建交互式可视化
+5. **工具对比**：选择最适合的工具
+
+## 关键技能
+
+- 图表类型选择
+- 数据可视化设计
+- 交互式图表创建
+- 工具性能优化
+
+## 学习建议
+
+- **对比学习**：同时学习三种工具，理解各自优势
+- **实践为主**：通过大量图表练习掌握技能
+- **设计思维**：关注图表的美观性和可读性
+- **场景导向**：根据应用场景选择合适工具
+
+---
+
+*掌握这些可视化工具将为数据分析结果的展示和沟通提供强大的支持。*
