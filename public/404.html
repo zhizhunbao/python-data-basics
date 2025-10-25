@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Python Data Basics</title>
+</head>
+<body>
+    <script>
+        // GitHub Pages 404.html 重定向脚本
+        // 当用户直接访问SPA路由时，GitHub Pages会返回404.html
+        // 我们需要将URL重写为React应用可以处理的格式
+        
+        var path = window.location.pathname;
+        var search = window.location.search;
+        var hash = window.location.hash;
+        
+        // 移除 /python-data-basics 前缀，获取实际路径
+        var actualPath = path.replace(/^\/python-data-basics/, '');
+        
+        // 设置一个标记，告诉React应用这是从404.html来的
+        sessionStorage.setItem('from404', 'true');
+        sessionStorage.setItem('originalPath', actualPath);
+        
+        // 重定向到React应用根路径
+        window.location.replace('/python-data-basics/');
+    </script>
+</body>
+</html>
