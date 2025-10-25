@@ -23,6 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
+# Cursor editor files
+.cursor/
+.cursorignore
+
 # Environment variables
 .env
 .env.local
