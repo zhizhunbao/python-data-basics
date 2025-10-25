@@ -1,115 +1,78 @@
-# Business Goals and Data Understanding
+# Business Goals
 
-## Overview
+## 1.1 Housing Price Prediction Requirements
 
-The success of data analysis projects often depends on accurately defining business objectives. This module will learn how to transform vague business requirements into specific data analysis goals, laying the foundation for subsequent data processing and analysis work.
+### User Pain Points
+Homebuyers and investors face challenges with housing price volatility and information opacity, requiring intelligent prediction tools based on real data.
 
-## Business Goal Setting Example
+### Solution
+- **Core Problem**: Build accurate and fast housing price prediction models using California real estate data
+- **Technical Solution**: Machine learning algorithms (Linear Regression, Random Forest) to analyze California housing data
+- **Expected Results**: 85%+ accuracy, sub-second response time, providing real-time housing price assessment
 
-Learn how to transform business requirements into data analysis goals through practical cases:
+## 1.2 Data Overview
 
-```python
-# Business goal setting example
-# An e-commerce platform wants to improve user purchase conversion rate
+### Basic Information
 
-# 1. Business requirement analysis
-business_need = "Improve user purchase conversion rate"
-current_rate = 2.5  # Current conversion rate
-target_rate = 4.0   # Target conversion rate
+| Attribute | Value |
+|-----------|-------|
+| **Dataset Name** | California Housing Dataset |
+| **Data Source** | UCI Machine Learning Repository |
+| **Data Scale** | 20,640 records |
+| **Feature Count** | 8 numerical features + 1 target variable |
+| **Data Purpose** | Housing price prediction model training |
+| **Missing Values** | No missing values |
+| **Data Type** | Continuous numerical |
 
-# 2. Transform into data questions
-data_questions = [
-    "What factors influence user purchase decisions?",
-    "What are the characteristics of user behavior patterns?",
-    "How to predict user purchase probability?"
-]
+### Sample Preview
 
-# 3. Set analysis goals
-analysis_goals = {
-    "Identify key factors": "Find main variables affecting purchase decisions",
-    "User segmentation": "Segment users based on behavioral characteristics",
-    "Prediction model": "Build purchase probability prediction model"
-}
+| Median Income | House Age | Avg Rooms | Avg Bedrooms | Population | Avg Occupancy | Latitude | Longitude | Median House Value |
+|---------------|-----------|-----------|--------------|------------|---------------|----------|-----------|-------------------|
+| 8.3252 | 41.0 | 6.984127 | 1.023810 | 322.0 | 2.555556 | 37.88 | -122.23 | 4.526 |
+| 8.3014 | 21.0 | 6.238137 | 0.971880 | 2401.0 | 2.109842 | 37.86 | -122.22 | 3.585 |
+| 7.2574 | 52.0 | 8.288136 | 1.073446 | 496.0 | 2.802260 | 37.85 | -122.24 | 3.521 |
+| 5.6431 | 52.0 | 5.817352 | 1.073059 | 558.0 | 2.547945 | 37.85 | -122.25 | 3.413 |
+| 3.8462 | 52.0 | 6.281853 | 1.081081 | 565.0 | 2.181467 | 37.85 | -122.25 | 3.422 |
 
-print(f"Business need: {business_need}")
-print(f"Current conversion rate: {current_rate}%")
-print(f"Target conversion rate: {target_rate}%")
-print("\nData questions:")
-for i, question in enumerate(data_questions, 1):
-    print(f"{i}. {question}")
-```
+### Feature Selection (8 features)
 
-## Learning Objectives
+| Feature Name | Data Type | Meaning | Value Range | Importance |
+|--------------|-----------|---------|-------------|------------|
+| **Median Income** | float | Median income (ten thousand dollars) | 0.50 - 15.00 | ⭐⭐⭐⭐⭐ |
+| **House Age** | float | House age (years) | 1.00 - 52.00 | ⭐⭐⭐⭐ |
+| **Average Rooms** | float | Average number of rooms | 0.85 - 141.91 | ⭐⭐⭐⭐ |
+| **Average Bedrooms** | float | Average number of bedrooms | 0.33 - 34.07 | ⭐⭐⭐ |
+| **Population** | float | Population count | 3.00 - 35682.00 | ⭐⭐ |
+| **Average Occupancy** | float | Average occupancy | 0.69 - 1243.33 | ⭐⭐ |
+| **Latitude** | float | Latitude coordinate | 32.54 - 41.95 | ⭐⭐⭐ |
+| **Longitude** | float | Longitude coordinate | -124.35 - -114.31 | ⭐⭐⭐ |
 
-Through this module, you will be able to:
+### Feature Engineering Suggestions (4 features)
 
-- **Clarify Business Goals**: Learn to transform vague business requirements into specific data analysis goals
-- **Understand Data Nature**: Master systematic methods for data exploration and understanding
-- **Define Problem Framework**: Establish clear problem definition and solution approaches
-- **Develop Analysis Strategy**: Lay the foundation for subsequent data processing and analysis work
+| New Feature | Calculation Formula | Business Meaning |
+|-------------|-------------------|------------------|
+| **Room Density** | Average Rooms / Population | Reflects living comfort |
+| **Bedroom Ratio** | Average Bedrooms / Average Rooms | Reflects house structure |
+| **Income Density** | Median Income / Population | Reflects regional economic level |
+| **House Value Ratio** | Median House Value / Median Income | Reflects house price to income ratio |
 
-## Core Content
+### Target Variable (1 variable)
 
-### 1. Business Goal Setting
+| Variable Name | Data Type | Meaning | Value Range | Unit |
+|----------------|-----------|---------|-------------|------|
+| **Median House Value** | float | Median house value | 0.15 - 5.00 | Hundred thousand dollars |
 
-The success of data analysis projects often depends on accurately defining business objectives. We will learn:
+## 1.3 Data Analysis Workflow
 
-- How to identify and analyze business requirements
-- Transform business problems into data problems
-- Set measurable analysis goals
-- Establish project success criteria
+### Core Analysis Steps (8 stages)
 
-### 2. Data Understanding and Exploration
-
-Before starting analysis, deep understanding of data is essential:
-
-- Data quality assessment
-- Data distribution characteristic analysis
-- Variable relationship exploration
-- Data preprocessing requirement identification
-
-### 3. Problem Definition Framework
-
-Establish systematic problem definition methods:
-
-- Problem classification and prioritization
-- Hypothesis establishment and validation
-- Analysis scope definition
-- Expected result planning
-
-## Practice Case
-
-We will demonstrate how to:
-
-1. **Business Background**: An e-commerce platform wants to improve user purchase conversion rate
-2. **Goal Setting**: Identify key factors affecting user purchase decisions
-3. **Data Understanding**: Analyze user behavior data and product feature data
-4. **Problem Definition**: Build user purchase behavior prediction model
-
-## E-commerce User Behavior Data Example
-
-| User ID | Visit Duration | Page Views | Purchased | Purchase Amount |
-|---------|----------------|------------|-----------|-----------------|
-| U001    | 15 minutes     | 8          | Yes       | 299             |
-| U002    | 3 minutes      | 2          | No        | 0               |
-| U003    | 25 minutes     | 12         | Yes       | 599             |
-| U004    | 8 minutes      | 5          | No        | 0               |
-| U005    | 12 minutes     | 7          | Yes       | 199             |
-
-## Learning Path
-
-1. **Overview**: Understand module structure and learning path
-2. **Business Goals**: Learn how to set and analyze business goals
-3. **Data Understanding**: Master data exploration and understanding methods
-4. **Problem Definition**: Establish systematic problem definition framework
-
-## Key Skills
-
-- Business requirement analysis
-- Data exploration techniques
-- Problem definition methods
-- Project planning capabilities
-
----
-
-*This module lays a solid business foundation for subsequent data processing, analysis, and visualization work.*
+| Step | Tool | Data Source | Specific Operations | Instructor | Corresponding Module |
+|------|------|-------------|-------------------|------------|---------------------|
+| **1. Data Collection** | **Pandas** | **CSV File** | Load California housing dataset | [Your Name] | **DataTools** |
+| **2. Data Overview** | **Pandas** | Raw data | Data shape, types, missing value check | [Your Name] | **DataTools** |
+| **3. Data Cleaning** | **Pandas** | Overview data | Handle missing values, outliers, duplicates | [Your Name] | **DataTools** |
+| **4. Feature Engineering** | **NumPy + Pandas** | Cleaned data | Create new features, data standardization | [Your Name] | **DataTools** |
+| **5. Exploratory Analysis** | **Matplotlib + Seaborn** | Processed data | Distribution analysis, correlation analysis | [Your Name] | **Visualization** |
+| **6. Data Visualization** | **Matplotlib + Seaborn** | Analysis data | Create professional charts and dashboards | [Your Name] | **Visualization** |
+| **7. Model Building** | **Pandas + NumPy** | Feature data | Train housing price prediction model | [Your Name] | **Workflow** |
+| **8. Results Presentation** | **Matplotlib + Pandas** | Model results | Model evaluation, report generation | [Your Name] | **Workflow** |

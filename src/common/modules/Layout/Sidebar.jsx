@@ -105,11 +105,11 @@ export function Sidebar() {
   return (
     <>
       {/* 桌面端侧边栏 */}
-      <aside className={`hidden md:block w-64 border-r p-6 transition-colors duration-200 ${
+      <aside className={`hidden md:block w-64 border-r p-6 transition-colors duration-200 fixed left-0 top-16 z-30 ${
         theme === 'dark' 
           ? 'bg-slate-900 border-slate-700' 
           : 'bg-white border-gray-200'
-      }`} style={{ height: 'calc(100vh - 60px)' }}>
+      }`} style={{ height: 'calc(100vh - 64px)' }}>
         <nav className="space-y-1">
           {navigationItems.map((item) => renderNavigationItem(item, false))}
         </nav>
