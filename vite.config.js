@@ -65,7 +65,10 @@ export default defineConfig({
       'zustand',
       '@mdx-js/react',
       'prismjs',
-      'lucide-react'
+      'lucide-react',
+      'markmap-view',
+      'markmap-lib',
+      'markmap-toolbar'
     ]
   }
 })

@@ -36,30 +36,30 @@ function App() {
       <GitHubPagesRedirect />
       <Layout>
         <Routes>
-          {/* 业务目标与数据理解模块 */}
-          {businessRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-          
-          {/* Python数据处理工具学习模块 */}
-          {DataToolsRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-          
-          {/* 数据可视化工具学习模块 */}
-          {visualizationRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-          
-          {/* 完整数据分析流程实战模块 */}
-          {workflowRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-          
-          {/* 默认路由 - 重定向到业务目标页面 */}
-          <Route path="/" element={<Navigate to="/business" replace />} />
-        </Routes>
-      </Layout>
+            {/* 业务目标与数据理解模块 */}
+            {businessRoutes.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element} />
+            ))}
+            
+            {/* Python数据处理工具学习模块 */}
+            {DataToolsRoutes.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element} />
+            ))}
+            
+            {/* 数据可视化工具学习模块 */}
+            {visualizationRoutes.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element} />
+            ))}
+            
+            {/* 完整数据分析流程实战模块 */}
+            {workflowRoutes.map((route, index) => (
+<Route key={index} path={route.path} element={route.element} />
+            ))}
+            
+            {/* 默认路由 - 重定向到业务目标页面 */}
+            <Route path="/" element={<Navigate to="/business" replace />} />
+          </Routes>
+        </Layout>
     </Router>
   )
 }
