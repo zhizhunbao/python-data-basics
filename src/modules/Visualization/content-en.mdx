@@ -1,192 +1,515 @@
-# Data Visualization Tools
+# Data Visualization Trio
 
-## Overview
+## Scenario 1: Precise Control of Static Charts for Scientific Publishing
 
-Data visualization is an indispensable part of data analysis. This module will introduce the three most commonly used visualization tools in Python: Matplotlib, Seaborn, and Plotly, helping you choose the most suitable visualization solution based on your needs.
+**Task: Create static charts for papers and reports that require precise control over every detail (fonts, colors, layout)**
 
-## California Housing Data Visualization Example
+> 💡 **Matplotlib = The Swiss Army knife of visualization, limitless underlying control**  
+> Like painting with a brush, you can precisely control every stroke, perfect for scenarios that require complete customization!
 
-Learn about the characteristics of the three visualization tools through practical code examples:
+### Matplotlib - Underlying Control, Unlimited Customization
 
 ```python
-# California housing data visualization example
 import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.express as px
 import pandas as pd
 import numpy as np
 
 # Load California housing data
 df = pd.read_csv('public/data/california_housing.csv')
 
-print("Data overview:")
-print(f"Data shape: {df.shape}")
-print(f"Column names: {list(df.columns)}")
-print("\nFirst 5 rows:")
-print(df.head())
+# Create multiple subplots with precise control over layout
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+fig.suptitle('California Housing Data Analysis', fontsize=16, fontweight='bold')
 
-# 1. Matplotlib basic charts
-plt.figure(figsize=(15, 10))
+# 1. House price distribution histogram - precise control over color, transparency, borders
+axes[0, 0].hist(df['median_house_value'], bins=50, alpha=0.7, color='skyblue', edgecolor='black')
+axes[0, 0].set_title('House Price Distribution', fontsize=12, fontweight='bold')
+axes[0, 0].set_xlabel('Median House Value ($)', fontsize=10)
+axes[0, 0].set_ylabel('Frequency', fontsize=10)
+axes[0, 0].grid(True, alpha=0.3)
 
-# House price distribution histogram
-plt.subplot(2, 3, 1)
-plt.hist(df['median_house_value'], bins=50, alpha=0.7, color='skyblue')
-plt.title('House Price Distribution - Matplotlib')
-plt.xlabel('Median House Value')
-plt.ylabel('Frequency')
+# 2. Income vs house price scatter plot - precise control over point size, color, transparency
+axes[0, 1].scatter(df['median_income'], df['median_house_value'], 
+                   alpha=0.5, s=20, c=df['housing_median_age'], cmap='viridis')
+axes[0, 1].set_title('Income vs House Price Relationship', fontsize=12, fontweight='bold')
+axes[0, 1].set_xlabel('Median Income (in 10k $)', fontsize=10)
+axes[0, 1].set_ylabel('Median House Value ($)', fontsize=10)
 
-# Income vs house price relationship scatter plot
-plt.subplot(2, 3, 2)
-plt.scatter(df['median_income'], df['median_house_value'], alpha=0.5)
-plt.title('Income vs House Price Relationship - Matplotlib')
-plt.xlabel('Median Income')
-plt.ylabel('Median House Value')
+# 3. Box plots for different regions - fully customized
+bp = axes[1, 0].boxplot([df[df['ocean_proximity']==cat]['median_house_value'].dropna() 
+                          for cat in df['ocean_proximity'].unique()], 
+                         labels=df['ocean_proximity'].unique(),
+                         patch_artist=True)
+# Customize box plot colors
+for patch in bp['boxes']:
+    patch.set_facecolor('lightblue')
+axes[1, 0].set_title('House Price Distribution by Region', fontsize=12, fontweight='bold')
+axes[1, 0].set_ylabel('Median House Value ($)', fontsize=10)
+axes[1, 0].tick_params(axis='x', rotation=45)
 
-# House age distribution
-plt.subplot(2, 3, 3)
-plt.hist(df['housing_median_age'], bins=30, alpha=0.7, color='lightcoral')
-plt.title('House Age Distribution - Matplotlib')
-plt.xlabel('Median House Age')
-plt.ylabel('Frequency')
+# 4. Time series line plot - complete style control
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+axes[1, 1].plot(x, y, linewidth=2, color='red', linestyle='-', marker='o', markersize=4, label='sin(x)')
+axes[1, 1].plot(x, np.cos(x), linewidth=2, color='blue', linestyle='--', marker='s', markersize=4, label='cos(x)')
+axes[1, 1].set_title('Function Graph', fontsize=12, fontweight='bold')
+axes[1, 1].set_xlabel('X', fontsize=10)
+axes[1, 1].set_ylabel('Y', fontsize=10)
+axes[1, 1].legend()
+axes[1, 1].grid(True, alpha=0.3)
 
 plt.tight_layout()
+plt.savefig('report_chart.png', dpi=300, bbox_inches='tight')  # High-resolution save
 plt.show()
 
-# 2. Seaborn statistical charts
-plt.figure(figsize=(12, 8))
+print("✅ Advantage: Complete control over every detail, perfect for papers, reports, publications")
+```
 
-# House price vs income relationship
-plt.subplot(2, 2, 1)
-sns.scatterplot(data=df, x='median_income', y='median_house_value', alpha=0.6)
-plt.title('Income vs House Price Relationship - Seaborn')
+### Seaborn - Born for Aesthetics, Difficult to Control Details Precisely
 
-# House price distribution by ocean proximity
-plt.subplot(2, 2, 2)
-sns.boxplot(data=df, x='ocean_proximity', y='median_house_value')
-plt.title('House Price Distribution by Ocean Proximity - Seaborn')
-plt.xticks(rotation=45)
+```python
+import seaborn as sns
 
-# House price vs number of rooms relationship
-plt.subplot(2, 2, 3)
-sns.scatterplot(data=df, x='total_rooms', y='median_house_value', alpha=0.6)
-plt.title('Number of Rooms vs House Price Relationship - Seaborn')
+# Seaborn focuses on aesthetics but has limited customization capabilities
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=df, x='median_income', y='median_house_value', 
+                size='housing_median_age', hue='housing_median_age')
+plt.title('Income vs House Price Relationship')
+# ❌ Difficult to precisely control point size range, color mapping, etc.
+# ❌ Difficult to adjust font and spacing for each label
+plt.show()
+```
 
-# Correlation heatmap
-plt.subplot(2, 2, 4)
+### Plotly - Highly Interactive, Not Suitable for Static Export
+
+```python
+import plotly.express as px
+
+# Plotly creates interactive charts
+fig = px.scatter(df, x='median_income', y='median_house_value', 
+                 size='housing_median_age', color='ocean_proximity')
+fig.show()
+
+# ❌ Static image export quality is average
+# ❌ Difficult to precisely control every pixel
+# ✅ Suitable for web display, not for papers and reports
+```
+
+**Evaluation:**
+- **Matplotlib**: ⭐⭐⭐⭐⭐ Underlying control, perfect for static charts, papers, reports
+- **Seaborn**: ⭐⭐⭐ Aesthetic but limited customization
+- **Plotly**: ⭐⭐ Interactive, not suitable for static export
+
+---
+
+## Scenario 2: Statistical Analysis and Rapid Exploratory Data Visualization
+
+**Task: Quickly create aesthetic statistical charts to analyze data distribution, correlations, and other statistical characteristics**
+
+> 💡 **Seaborn = One-click generator for statistical charts, beauty is justice**  
+> Like using a "beauty filter camera", just one line of code to generate professional statistical charts!
+
+### Seaborn - Statistical Chart Expert, Aesthetic and Efficient
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Load data
+df = pd.read_csv('public/data/california_housing.csv')
+
+# Set aesthetic theme
+sns.set_style("whitegrid")
+sns.set_palette("husl")
+
+# Create multiple statistical charts
+fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+
+# 1. Distribution plot - automatically handles kernel density estimation
+sns.histplot(data=df, x='median_house_value', kde=True, ax=axes[0, 0])
+axes[0, 0].set_title('House Price Distribution (with KDE curve)')
+
+# 2. Box plot - automatic grouping and statistics
+sns.boxplot(data=df, x='ocean_proximity', y='median_house_value', ax=axes[0, 1])
+axes[0, 1].set_title('House Price Box Plot by Region')
+axes[0, 1].tick_params(axis='x', rotation=45)
+
+# 3. Scatter plot with regression line - automatic fitting
+sns.regplot(data=df, x='median_income', y='median_house_value', ax=axes[0, 2], scatter_kws={'alpha':0.5})
+axes[0, 2].set_title('Income vs House Price Relationship (with regression line)')
+
+# 4. Correlation heatmap - one-click generation
 numeric_cols = df.select_dtypes(include=[np.number]).columns
 corr_matrix = df[numeric_cols].corr()
-sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)
-plt.title('Numeric Variables Correlation - Seaborn')
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0, 
+            square=True, ax=axes[1, 0], fmt='.2f')
+axes[1, 0].set_title('Numeric Variable Correlation Heatmap')
+
+# 5. Violin plot - shows distribution shape
+sns.violinplot(data=df, x='ocean_proximity', y='median_house_value', ax=axes[1, 1])
+axes[1, 1].set_title('House Price Distribution Shape by Region')
+axes[1, 1].tick_params(axis='x', rotation=45)
+
+# 6. Multi-variable paired relationship plot - one-click matrix generation
+sample_df = df[['median_income', 'housing_median_age', 'median_house_value']].head(500)
+# Note: pairplot doesn't work well with subplots, needs to be drawn separately
+sns.scatterplot(data=df, x='housing_median_age', y='median_house_value', 
+                size='median_income', hue='ocean_proximity', ax=axes[1, 2], alpha=0.6)
+axes[1, 2].set_title('Multi-Variable Relationship Chart')
 
 plt.tight_layout()
 plt.show()
 
-# 3. Plotly interactive charts
-# Geographic distribution map
+# Quickly generate paired relationship plot
+sns.pairplot(df[['median_income', 'housing_median_age', 'median_house_value', 'ocean_proximity']].head(500),
+             hue='ocean_proximity', diag_kind='kde')
+plt.show()
+
+print("✅ Advantage: One line of code to generate professional statistical charts, aesthetic and efficient")
+```
+
+### Matplotlib - Requires Extensive Code for Same Results
+
+```python
+import matplotlib.pyplot as plt
+
+# Creating heatmap requires extensive manual code
+fig, ax = plt.subplots()
+im = ax.imshow(corr_matrix, cmap='coolwarm')
+# Need to manually add ticks, labels, values, etc...
+# Code volume is 5-10 times that of Seaborn
+```
+
+### Plotly - Interactive but Statistical Features Less Comprehensive than Seaborn
+
+```python
+import plotly.express as px
+
+# Plotly is more focused on interactivity, statistical charts less comprehensive than Seaborn
+fig = px.scatter(df, x='median_income', y='median_house_value', 
+                 color='ocean_proximity', trendline='ols')
+fig.show()
+# ❌ No advanced statistical charts like box plots, violin plots, etc.
+# ❌ Statistical features less comprehensive than Seaborn
+```
+
+**Evaluation:**
+- **Seaborn**: ⭐⭐⭐⭐⭐ Statistical chart expert, aesthetic and efficient
+- **Matplotlib**: ⭐⭐⭐ Requires extensive code
+- **Plotly**: ⭐⭐⭐ Interactive but limited statistical features
+
+---
+
+## Scenario 3: Interactive Data Exploration and Dashboards
+
+**Task: Create interactive visualization charts that support zoom, hover, filtering, and other interactive operations**
+
+> 💡 **Plotly = The Tesla of visualization, unparalleled interactive experience**  
+> Like using a touchscreen phone, users can freely explore data and discover insights hidden in the data!
+
+### Plotly - The King of Interactive Charts
+
+```python
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import pandas as pd
+
+# Load data
+df = pd.read_csv('public/data/california_housing.csv')
+
+# 1. Geographic scatter plot - supports zoom and hover
 fig1 = px.scatter_mapbox(df.sample(1000), 
                         lat='latitude', 
                         lon='longitude',
                         color='median_house_value',
                         size='population',
-                        hover_data=['median_income', 'housing_median_age'],
+                        hover_data=['median_income', 'housing_median_age', 'ocean_proximity'],
                         mapbox_style="open-street-map",
-                        title='California Housing Geographic Distribution - Plotly')
+                        title='California Housing Geographic Distribution',
+                        color_continuous_scale='Viridis')
+fig1.update_layout(height=600)
 fig1.show()
 
-# 3D scatter plot
+# 2. 3D scatter plot - supports rotation and zoom
 fig2 = px.scatter_3d(df.sample(1000), 
                      x='median_income', 
                      y='housing_median_age', 
                      z='median_house_value',
                      color='ocean_proximity',
-                     title='Income-Age-House Price 3D Relationship - Plotly')
+                     size='population',
+                     hover_data=['total_rooms', 'total_bedrooms'],
+                     title='Income-Age-House Price 3D Relationship Chart')
 fig2.show()
 
-print("\nThree tools characteristics comparison:")
-print("Matplotlib: Fine control, suitable for static charts and basic analysis")
-print("Seaborn: Beautiful styling, suitable for statistical charts and correlation analysis")
-print("Plotly: Strong interactivity, suitable for geographic distribution and 3D visualization")
+# 3. Interactive dashboard - multiple chart combination
+fig = make_subplots(
+    rows=2, cols=2,
+    subplot_titles=('House Price Distribution', 'Income vs House Price', 'House Age Distribution', 'Regional Box Plot'),
+    specs=[[{"secondary_y": False}, {"secondary_y": False}],
+           [{"secondary_y": False}, {"secondary_y": False}]]
+)
+
+# House price distribution histogram
+fig.add_trace(
+    go.Histogram(x=df['median_house_value'], name='House Price Distribution', nbinsx=50),
+    row=1, col=1
+)
+
+# Income vs house price scatter plot
+fig.add_trace(
+    go.Scatter(x=df['median_income'], y=df['median_house_value'],
+               mode='markers', name='Scatter Plot', 
+               marker=dict(size=5, opacity=0.5)),
+    row=1, col=2
+)
+
+# House age distribution
+fig.add_trace(
+    go.Histogram(x=df['housing_median_age'], name='House Age', nbinsx=30),
+    row=2, col=1
+)
+
+# Regional box plot
+for cat in df['ocean_proximity'].unique():
+    fig.add_trace(
+        go.Box(y=df[df['ocean_proximity']==cat]['median_house_value'], 
+               name=cat),
+        row=2, col=2
+    )
+
+fig.update_layout(height=1000, title_text="California Housing Data Dashboard", showlegend=False)
+fig.show()
+
+# 4. Animated time series chart (simulated time data)
+# Assume we're summarizing data by month
+df['month'] = (df.index % 12) + 1
+df['year'] = 2020 + (df.index // 12)
+
+fig3 = px.scatter(df, x='median_income', y='median_house_value', 
+                  size='population', color='ocean_proximity',
+                  animation_frame='month', 
+                  hover_name='ocean_proximity',
+                  title='Animated Income-House Price Relationship by Month')
+fig3.show()
+
+print("✅ Advantage: Powerful interactive features, supports zoom, hover, filtering, animation, etc.")
 ```
 
-## Learning Objectives
+### Matplotlib - Static Charts, No Interactivity
 
-Through this module, you will be able to:
+```python
+import matplotlib.pyplot as plt
 
-- **Master Matplotlib Basics**: Learn to use Matplotlib to create various basic charts
-- **Proficient in Seaborn**: Master Seaborn's advanced statistical chart functions
-- **Learn Plotly Interaction**: Create interactive data visualizations
-- **Tool Selection Strategy**: Choose the most suitable visualization tool based on needs
+# Matplotlib creates static charts
+plt.scatter(df['median_income'], df['median_house_value'])
+plt.title('Income vs House Price')
+plt.show()
 
-## Core Content
+# ❌ Cannot zoom or hover to view specific values
+# ❌ Cannot dynamically filter data
+# ❌ Cannot create 3D rotatable charts
+```
 
-### 1. Matplotlib Basic Plotting
+### Seaborn - Based on Matplotlib, Also No Interactivity
 
-Python's most basic visualization library, providing low-level plotting control:
+```python
+import seaborn as sns
 
-- **Chart Types**: Line charts, bar charts, scatter plots, pie charts, etc.
-- **Customization Options**: Colors, styles, labels, legends, etc.
-- **Subplot Layout**: Multi-subplot combinations and complex layouts
-- **Save Export**: Save graphics in multiple formats
+# Seaborn is also based on Matplotlib, same limitations
+sns.scatterplot(data=df, x='median_income', y='median_house_value')
+plt.title('Income vs House Price')
+plt.show()
 
-### 2. Seaborn Statistical Charts
+# ❌ Same limitations
+```
 
-Advanced statistical chart library based on Matplotlib:
+**Evaluation:**
+- **Plotly**: ⭐⭐⭐⭐⭐ King of interactive charts, best user experience
+- **Matplotlib**: ⭐⭐ Static charts
+- **Seaborn**: ⭐⭐ Static charts
 
-- **Statistical Charts**: Distribution plots, correlation plots, regression plots, etc.
-- **Beautiful Styling**: Built-in themes and color schemes
-- **Data Grouping**: Support categorical and grouped visualization
-- **Quick Plotting**: Simplify the creation of complex charts
+### Decision Tree Selection
 
-### 3. Plotly Interactive Visualization
+```mermaid
+flowchart TD
+  A[Choose Data Visualization Tool] --> B{Need Interactive Features}
+  B -->|Yes<br/>Users Explore Data| C[Plotly<br/>King of Interactive Charts]
+  B -->|No<br/>Static Charts| D{Use Case}
+  
+  D -->|Paper/Report<br/>Need Precise Control| E{Need Aesthetic Statistical Charts}
+  D -->|Data Exploration<br/>Quick Visualization| F{Chart Type}
+  
+  E -->|Yes<br/>Box Plots Heatmaps Distributions| G[Seaborn<br/>Statistical Chart Expert]
+  E -->|No<br/>Basic Charts| H[Matplotlib<br/>Complete Control]
+  
+  F -->|3D Charts<br/>Geographic Distribution<br/>Animation| C
+  F -->|Statistical Charts<br/>Correlation Analysis| G
+  F -->|Basic Charts<br/>Complete Customization| H
+  
+  style A fill:#e1f5ff
+  style C fill:#ffe1f5
+  style G fill:#e1ffe1
+  style H fill:#fff4e1
+```
 
-Modern visualization library focused on interactive charts:
+### Common Functions for the Three Frameworks
 
-- **Interactive Features**: Zoom, hover, filter and other interactive operations
-- **3D Charts**: Support three-dimensional data visualization
-- **Animation Effects**: Time series animation and dynamic charts
-- **Dashboards**: Create complete interactive dashboards
+| Feature | Matplotlib | Seaborn | Plotly |
+|------|------------|---------|--------|
+| **Basic Charts** | `plt.plot()`, `plt.scatter()`, `plt.bar()`, `plt.hist()` | `sns.scatterplot()`, `sns.lineplot()`, `sns.barplot()` | `px.scatter()`, `px.line()`, `px.bar()` |
+| **Statistical Charts** | Manual implementation | `sns.boxplot()`, `sns.violinplot()`, `sns.heatmap()` | `px.box()`, `px.violin()` |
+| **Distribution Charts** | `plt.hist()`, `plt.density()` | `sns.histplot()`, `sns.kdeplot()` | `px.histogram()`, `px.density_heatmap()` |
+| **Regression Analysis** | Manual fitting | `sns.regplot()`, `sns.lmplot()` | `px.scatter(trendline='ols')` |
+| **Multi-variable Relationship** | Manual implementation | `sns.pairplot()`, `sns.jointplot()` | `px.scatter_matrix()` |
+| **3D Charts** | `ax.plot3D()`, `ax.scatter3D()` | ❌ Not supported | `px.scatter_3d()`, `go.Scatter3d()` |
+| **Geographic Distribution** | Requires additional library | ❌ Not supported | `px.scatter_mapbox()`, `px.choropleth()` |
+| **Subplot Layout** | `plt.subplots()` | `plt.subplots()` | `make_subplots()` |
+| **Animation** | `FuncAnimation` | ❌ Not supported | `px.scatter(animation_frame=)` |
+| **Style Theme** | `plt.style.use()` | `sns.set_style()`, `sns.set_palette()` | Built-in templates |
+| **Interactive Features** | ❌ No | ❌ No | ✅ Zoom, hover, filter |
+| **Export Format** | PNG, PDF, SVG, EPS | PNG, PDF, SVG | HTML, PNG, PDF |
 
-### 4. Tool Comparison and Selection
+#### 📊 Matplotlib Common Functions Quick Reference
 
-Choose the most suitable tool through multi-dimensional comparison:
+```python
+import matplotlib.pyplot as plt
+import numpy as np
 
-- **Usability**: Learning curve and usage complexity
-- **Customizability**: Graphics customization and style control capabilities
-- **Interactivity**: Interactive features and user experience
-- **Performance**: Rendering speed and memory usage
+# Basic charts
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
 
-## California Housing Data Preview
+plt.figure(figsize=(10, 6))
 
-| Longitude | Latitude | House Age | Total Rooms | Total Bedrooms | Population | Households | Median Income | Median House Value | Ocean Proximity |
-|-----------|----------|-----------|-------------|----------------|------------|------------|---------------|-------------------|-----------------|
-| -122.23 | 37.88 | 41.0 | 880.0 | 129.0 | 322.0 | 126.0 | 8.3252 | 452600.0 | NEAR BAY |
-| -122.22 | 37.86 | 21.0 | 7099.0 | 1106.0 | 2401.0 | 1138.0 | 8.3014 | 358500.0 | NEAR BAY |
-| -122.24 | 37.85 | 52.0 | 1467.0 | 190.0 | 496.0 | 177.0 | 7.2574 | 352100.0 | NEAR BAY |
-| -122.25 | 37.85 | 52.0 | 1274.0 | 235.0 | 558.0 | 219.0 | 5.6431 | 341300.0 | NEAR BAY |
-| -122.25 | 37.85 | 52.0 | 1627.0 | 280.0 | 565.0 | 259.0 | 3.8462 | 342200.0 | NEAR BAY |
+# Line chart
+plt.plot(x, y, label='sin(x)', linewidth=2, color='blue', linestyle='-')
+plt.plot(x, np.cos(x), label='cos(x)', linewidth=2, color='red', linestyle='--')
 
-## Learning Path
+# Scatter plot
+plt.scatter(x[:20], y[:20], s=50, c='red', alpha=0.7, marker='o')
 
-1. **Overview**: Understand the characteristics of the three visualization tools
-2. **Matplotlib Basics**: Master basic plotting functions
-3. **Seaborn Advanced**: Learn statistical chart creation
-4. **Plotly Interactive**: Create interactive visualizations
-5. **Tool Comparison**: Choose the most suitable tool
+# Bar chart
+plt.bar(['A', 'B', 'C'], [1, 2, 3], color=['red', 'green', 'blue'])
 
-## Key Skills
+# Histogram
+plt.hist(np.random.randn(1000), bins=30, alpha=0.7, color='skyblue')
 
-- Chart type selection
-- Data visualization design
-- Interactive chart creation
-- Tool performance optimization
+# Pie chart
+plt.pie([25, 30, 45], labels=['A', 'B', 'C'], autopct='%1.1f%%')
 
-## Learning Recommendations
+# Settings
+plt.title('Title', fontsize=14, fontweight='bold')
+plt.xlabel('X-axis Label')
+plt.ylabel('Y-axis Label')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.xlim(0, 10)
+plt.ylim(-1.5, 1.5)
 
-- **Comparative Learning**: Learn all three tools simultaneously to understand their respective advantages
-- **Practice-focused**: Master skills through extensive chart practice
-- **Design Thinking**: Focus on chart aesthetics and readability
-- **Scenario-oriented**: Choose appropriate tools based on application scenarios
+# Subplots
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+axes[0, 0].plot(x, y)
+axes[0, 1].scatter(x, y)
+axes[1, 0].bar(['A', 'B', 'C'], [1, 2, 3])
+axes[1, 1].hist(np.random.randn(1000), bins=30)
 
----
+# Save
+plt.savefig('figure.png', dpi=300, bbox_inches='tight')
+plt.show()
+```
 
-*Mastering these visualization tools will provide powerful support for presenting and communicating data analysis results.*
+#### 🎨 Seaborn Common Functions Quick Reference
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Set theme
+sns.set_style("whitegrid")
+sns.set_palette("husl")
+
+df = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100)
+})
+
+# Scatter plot
+sns.scatterplot(data=df, x='x', y='y', hue='category', size='x')
+
+# Line chart
+sns.lineplot(data=df, x='x', y='y', hue='category')
+
+# Histogram (with KDE)
+sns.histplot(data=df, x='y', kde=True, hue='category')
+
+# Box plot
+sns.boxplot(data=df, x='category', y='y')
+
+# Violin plot
+sns.violinplot(data=df, x='category', y='y')
+
+# Correlation heatmap
+corr = df.corr()
+sns.heatmap(corr, annot=True, cmap='coolwarm', center=0)
+
+# Regression plot
+sns.regplot(data=df, x='x', y='y')
+
+# Paired relationship plot
+sns.pairplot(df, hue='category')
+
+# Joint distribution plot
+sns.jointplot(data=df, x='x', y='y', kind='hex')
+
+plt.show()
+```
+
+#### 🚀 Plotly Common Functions Quick Reference
+
+```python
+import plotly.express as px
+import plotly.graph_objects as go
+import pandas as pd
+
+df = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100),
+    'size': np.random.randint(10, 50, 100)
+})
+
+# Scatter plot
+fig = px.scatter(df, x='x', y='y', color='category', size='size',
+                 hover_data=['category'], title='Scatter Plot')
+fig.show()
+
+# 3D scatter plot
+fig = px.scatter_3d(df, x='x', y='y', z=np.random.randn(100),
+                    color='category', size='size')
+fig.show()
+
+# Geographic distribution plot
+# fig = px.scatter_mapbox(df, lat='latitude', lon='longitude',
+#                         color='category', mapbox_style='open-street-map')
+# fig.show()
+
+# Subplots
+from plotly.subplots import make_subplots
+fig = make_subplots(rows=2, cols=2)
+fig.add_trace(go.Scatter(x=df['x'], y=df['y'], mode='markers'), row=1, col=1)
+fig.add_trace(go.Bar(x=['A', 'B', 'C'], y=[1, 2, 3]), row=1, col=2)
+fig.add_trace(go.Histogram(x=df['x']), row=2, col=1)
+fig.update_layout(height=800, title_text="Multi-Subplot Dashboard")
+fig.show()
+
+# Animation
+# df['frame'] = np.random.choice(range(1, 6), len(df))
+# fig = px.scatter(df, x='x', y='y', color='category', 
+#                  animation_frame='frame')
+# fig.show()
+```
