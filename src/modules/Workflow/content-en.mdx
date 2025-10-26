@@ -2,235 +2,303 @@
 
 ## Overview
 
-Data analysis workflow is the core framework for data analysis projects, covering the complete process from data collection to result presentation. This module will detail the four key stages of data analysis, helping you establish systematic analytical thinking and methods.
+The data analysis workflow is the core framework of data analysis projects, covering the complete process from data collection to result presentation. This module will detail the eight core steps of data analysis, helping you establish systematic analytical thinking and methods.
 
-## Complete Data Analysis Workflow Example
+## Core Analysis Steps (8 Stages)
 
-Learn about the complete data analysis process through practical code examples:
+### Step 1: Data Collection
+
+**Framework Used:** Pandas
 
 ```python
-# Complete data analysis workflow example
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix
 
-print("=== Complete Data Analysis Workflow ===")
+# Load California housing dataset from CSV file using Pandas
+# This is the first step of data analysis: obtaining data sources
+df = pd.read_csv('public/data/california_housing.csv')
 
-# 1. Data Collection Stage
-print("\n1. Data Collection Stage")
-print("Loading e-commerce user behavior data...")
-
-# Simulate data loading
-data = {
-    'user_id': range(1, 1001),
-    'age': np.random.randint(18, 65, 1000),
-    'gender': np.random.choice(['M', 'F'], 1000),
-    'session_duration': np.random.normal(300, 100, 1000),
-    'page_views': np.random.poisson(5, 1000),
-    'purchase_amount': np.random.exponential(50, 1000),
-    'is_purchased': np.random.choice([0, 1], 1000, p=[0.7, 0.3])
-}
-
-df = pd.DataFrame(data)
+# View basic data information
 print(f"Data shape: {df.shape}")
-print(f"Data overview:")
 print(df.head())
+```
 
-# 2. Data Processing Stage
-print("\n2. Data Processing Stage")
-print("Data cleaning and preprocessing...")
+### Step 2: Data Overview
 
-# Handle outliers
-df = df[df['session_duration'] > 0]
-df = df[df['page_views'] >= 0]
-df = df[df['purchase_amount'] >= 0]
+**Framework Used:** Pandas
+
+```python
+# Data overview: Check data shape, types, missing values, and other basic information
+print(df.info())  # Data types and basic information
+print(df.describe())  # Statistical summary
+print(df.isnull().sum())  # Missing value statistics
+```
+
+### Step 3: Data Cleaning
+
+**Framework Used:** Pandas
+
+```python
+# Data cleaning: Handle missing values, outliers, duplicates
+
+# Handle missing values (delete or fill)
+df = df.dropna()  # Delete rows containing missing values
+# Or use: df.fillna(df.mean())  # Fill with mean values
+
+# Handle outliers (remove records with negative house prices)
+df = df[df['median_house_value'] > 0]
+
+# Remove duplicates
+df = df.drop_duplicates()
+
+print(f"Data shape after cleaning: {df.shape}")
+```
+
+### Step 4: Feature Engineering
+
+**Framework Used:** NumPy + Pandas + Scikit-learn
+
+```python
+import numpy as np
+
+# Feature engineering: Create new features, data standardization
 
 # Create new features
-df['avg_time_per_page'] = df['session_duration'] / df['page_views']
-df['high_value_user'] = (df['purchase_amount'] > df['purchase_amount'].quantile(0.8)).astype(int)
+df['rooms_per_household'] = df['total_rooms'] / df['households']
+df['bedrooms_per_room'] = df['total_bedrooms'] / df['total_rooms']
+df['population_per_household'] = df['population'] / df['households']
 
-print(f"Processed data shape: {df.shape}")
-print("New features created")
+# Data standardization
+from sklearn.preprocessing import StandardScaler
 
-# 3. Data Analysis Stage
-print("\n3. Data Analysis Stage")
-print("Building user purchase behavior prediction model...")
+numeric_features = ['median_income', 'housing_median_age', 'total_rooms']
+scaler = StandardScaler()
+df[numeric_features] = scaler.fit_transform(df[numeric_features])
 
-# Prepare features and target variables
-features = ['age', 'session_duration', 'page_views', 'avg_time_per_page']
-X = df[features]
-y = df['is_purchased']
+print("Feature engineering completed")
+```
+
+### Step 5: Exploratory Analysis
+
+**Framework Used:** Matplotlib + Seaborn + Pandas
+
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Exploratory analysis: Distribution analysis, correlation analysis
+
+# Set plotting style
+sns.set_style("whitegrid")
+
+# Create analysis charts
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+
+# 1. House price distribution histogram
+axes[0, 0].hist(df['median_house_value'], bins=50, alpha=0.7)
+axes[0, 0].set_title('House Price Distribution')
+axes[0, 0].set_xlabel('House Price')
+axes[0, 0].set_ylabel('Frequency')
+
+# 2. Scatter plot of income vs. house price
+axes[0, 1].scatter(df['median_income'], df['median_house_value'], alpha=0.6)
+axes[0, 1].set_title('Income vs. House Price')
+
+# 3. Correlation heatmap
+numeric_cols = ['median_house_value', 'median_income', 'total_rooms']
+corr_matrix = df[numeric_cols].corr()
+sns.heatmap(corr_matrix, annot=True, ax=axes[1, 0])
+
+plt.tight_layout()
+plt.show()
+```
+
+### Step 6: Data Visualization
+
+**Framework Used:** Matplotlib + Pandas
+
+```python
+# Data visualization: Create professional charts and dashboards
+
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+
+# 1. House price box plot
+axes[0, 0].boxplot(df['median_house_value'])
+axes[0, 0].set_title('House Price Box Plot')
+
+# 2. Income distribution
+axes[0, 1].hist(df['median_income'], bins=50, alpha=0.7)
+axes[0, 1].set_title('Income Distribution')
+
+# 3. Scatter plot
+axes[1, 0].scatter(df['population'], df['median_house_value'], alpha=0.5)
+axes[1, 0].set_title('Population vs. House Price')
+
+plt.tight_layout()
+plt.show()
+```
+
+### Step 7: Model Building
+
+**Framework Used:** Scikit-learn + Pandas + NumPy
+
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Model building: Train house price prediction model
+
+# Prepare features and target variable
+feature_cols = ['median_income', 'housing_median_age', 'total_rooms']
+X = df[feature_cols]
+y = df['median_house_value']
 
 # Split data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+# Train linear regression model
+model = LinearRegression()
 model.fit(X_train, y_train)
 
-# Predict and evaluate
+# Predict
 y_pred = model.predict(X_test)
-print("\nModel performance evaluation:")
-print(classification_report(y_test, y_pred))
 
-# Feature importance
-feature_importance = pd.DataFrame({
-    'feature': features,
-    'importance': model.feature_importances_
-}).sort_values('importance', ascending=False)
+# Model evaluation
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
 
-print("\nFeature importance:")
-print(feature_importance)
+print(f"RMSE: {rmse:.2f}")
+print(f"R² Score: {r2:.4f}")
+```
 
-# 4. Result Presentation Stage
-print("\n4. Result Presentation Stage")
-print("Generating analysis report and visualization...")
+### Step 8: Result Presentation
 
-# Create visualization
+**Framework Used:** Matplotlib + Pandas
+
+```python
+# Result presentation: Model evaluation, report generation
+
 fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-fig.suptitle('E-commerce User Behavior Analysis Report', fontsize=16)
 
-# User age distribution
-axes[0, 0].hist(df['age'], bins=20, alpha=0.7, color='skyblue')
-axes[0, 0].set_title('User Age Distribution')
-axes[0, 0].set_xlabel('Age')
-axes[0, 0].set_ylabel('User Count')
+# 1. Predicted vs. actual values
+axes[0, 0].scatter(y_test, y_pred, alpha=0.6)
+axes[0, 0].plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
+axes[0, 0].set_xlabel('Actual Values')
+axes[0, 0].set_ylabel('Predicted Values')
+axes[0, 0].set_title(f'Predicted vs. Actual (R² = {r2:.3f})')
 
-# Purchase behavior comparison
-purchase_by_gender = df.groupby('gender')['is_purchased'].mean()
-axes[0, 1].bar(purchase_by_gender.index, purchase_by_gender.values, color=['lightcoral', 'lightblue'])
-axes[0, 1].set_title('Gender Purchase Rate Comparison')
-axes[0, 1].set_ylabel('Purchase Rate')
-
-# Session duration vs purchase relationship
-axes[1, 0].scatter(df['session_duration'], df['purchase_amount'], alpha=0.6)
-axes[1, 0].set_title('Session Duration vs Purchase Amount Relationship')
-axes[1, 0].set_xlabel('Session Duration (seconds)')
-axes[1, 0].set_ylabel('Purchase Amount')
-
-# Feature importance
-axes[1, 1].barh(feature_importance['feature'], feature_importance['importance'])
-axes[1, 1].set_title('Feature Importance')
-axes[1, 1].set_xlabel('Importance')
+# 2. Residual distribution
+residuals = y_test - y_pred
+axes[0, 1].hist(residuals, bins=30, alpha=0.7)
+axes[0, 1].set_title('Residual Distribution')
+axes[0, 1].axvline(x=0, color='r', linestyle='--')
 
 plt.tight_layout()
 plt.show()
 
-# 5. Business Insights and Recommendations
-print("\n=== Business Insights and Recommendations ===")
-print(f"Total users: {len(df)}")
-print(f"Purchase user ratio: {df['is_purchased'].mean():.2%}")
-print(f"Average purchase amount: {df[df['is_purchased']==1]['purchase_amount'].mean():.2f}")
-print(f"Average session duration: {df['session_duration'].mean():.2f} seconds")
-
-print("\nKey Findings:")
-print("1. Session duration is a key factor in purchase decisions")
-print("2. Page views are positively correlated with purchase probability")
-print("3. Age distribution is relatively uniform with no obvious age preference")
-print("4. Gender has some influence on purchase behavior")
-
-print("\nAction Recommendations:")
-print("1. Optimize page loading speed to extend user session duration")
-print("2. Improve page content to increase page views")
-print("3. Develop differentiated marketing strategies for different gender users")
-print("4. Build user behavior prediction models for precision marketing")
-
-print("\n=== Analysis Complete ===")
+# Generate summary report
+print("\nData Analysis Project Summary Report")
+print(f"Model Performance: RMSE={rmse:.2f}, R²={r2:.4f}")
 ```
-
-## Learning Objectives
-
-Through this module, you will be able to:
-
-- **Master Complete Process**: Understand the complete lifecycle of data analysis projects
-- **Data Collection Skills**: Learn to acquire and initially explore data from various sources
-- **Data Processing Capabilities**: Master data cleaning, transformation, and feature engineering
-- **Analysis Modeling Techniques**: Learn statistical analysis and machine learning modeling
-- **Result Presentation Skills**: Effectively present and explain analysis results
-
-## Core Content
-
-### 1. Data Collection Stage
-
-The first step in data analysis, including:
-
-- **Data Acquisition**: Acquire data from databases, APIs, files, etc.
-- **Data Overview**: Understand basic information and structure of data
-- **Quality Assessment**: Check data completeness and accuracy
-- **Initial Exploration**: Understand data characteristics through statistics and visualization
-
-### 2. Data Processing Stage
-
-Data preprocessing to prepare for analysis:
-
-- **Data Cleaning**: Handle missing values, outliers, and duplicates
-- **Data Transformation**: Type conversion, standardization, normalization
-- **Feature Engineering**: Create new features and variables
-- **Data Splitting**: Train/test set division
-
-### 3. Data Analysis Stage
-
-The core part of the project:
-
-- **Descriptive Analysis**: Statistical summaries and distribution analysis
-- **Exploratory Analysis**: Variable relationships and correlation analysis
-- **Modeling Analysis**: Build prediction and classification models
-- **Model Evaluation**: Performance assessment and result validation
-
-### 4. Result Presentation Stage
-
-Ensure effective communication of analysis results:
-
-- **Data Visualization**: Create clear charts and dashboards
-- **Report Writing**: Structured analysis reports
-- **Result Interpretation**: Business meaning and insights
-- **Action Recommendations**: Recommendations based on analysis results
-
-## Practice Case
-
-E-commerce user behavior analysis project:
-
-1. **Data Collection**: Acquire e-commerce user behavior data
-2. **Data Processing**: Clean and preprocess user data
-3. **Data Analysis**: Build user purchase behavior prediction model
-4. **Result Presentation**: Generate analysis reports and visualizations
-
-## E-commerce User Behavior Data Preview
-
-| User ID | Age | Gender | Session Duration | Page Views | Purchase Amount | Purchased |
-|---------|-----|--------|------------------|------------|-----------------|-----------|
-| U001 | 28 | F | 320 | 8 | 299 | Yes |
-| U002 | 35 | M | 180 | 3 | 0 | No |
-| U003 | 42 | F | 450 | 12 | 599 | Yes |
-| U004 | 25 | M | 120 | 2 | 0 | No |
-| U005 | 38 | F | 380 | 9 | 199 | Yes |
-
-## Learning Path
-
-1. **Overview**: Understand complete data analysis workflow
-2. **Data Collection**: Learn data acquisition and initial exploration
-3. **Data Processing**: Master data cleaning and preprocessing techniques
-4. **Data Analysis**: Learn statistical analysis and modeling methods
-5. **Result Presentation**: Master visualization and reporting skills
-
-## Key Skills
-
-- Data collection and exploration
-- Data cleaning and preprocessing
-- Statistical analysis and modeling
-- Result visualization and interpretation
-
-## Learning Recommendations
-
-- **Project-oriented**: Learn workflow through complete projects
-- **Practice-focused**: Hands-on practice at each stage
-- **Business thinking**: Focus on business value and practical applications
-- **Tool proficiency**: Master various analysis tools
 
 ---
 
 *Mastering the complete data analysis workflow will lay a solid foundation for your data analysis career.*
+
+## Core Functions
+
+### Step 1: Data Collection Core Functions
+
+| Function | Framework | Description |
+|----------|-----------|-------------|
+| `pd.read_csv()` | Pandas | Read data from CSV file |
+| `pd.read_excel()` | Pandas | Read data from Excel file |
+| `pd.read_json()` | Pandas | Read data from JSON file |
+| `pd.read_sql()` | Pandas | Read data from SQL database |
+| `df.head()` | Pandas | View first few rows of data |
+
+### Step 2: Data Overview Core Functions
+
+| Function | Framework | Description |
+|----------|-----------|-------------|
+| `df.info()` | Pandas | Display data types and basic information |
+| `df.describe()` | Pandas | Display statistical summary |
+| `df.shape` | Pandas | Get data dimensions |
+| `df.columns` | Pandas | Get column names |
+| `df.dtypes` | Pandas | Get data types |
+| `df.isnull().sum()` | Pandas | Count missing values |
+| `df.value_counts()` | Pandas | Count unique values |
+
+### Step 3: Data Cleaning Core Functions
+
+| Function | Framework | Description |
+|----------|-----------|-------------|
+| `df.dropna()` | Pandas | Drop missing values |
+| `df.fillna()` | Pandas | Fill missing values |
+| `df.drop_duplicates()` | Pandas | Drop duplicate values |
+| `df.replace()` | Pandas | Replace values |
+| `df.query()` | Pandas | Query and filter data |
+| `df.drop()` | Pandas | Drop columns or rows |
+
+### Step 4: Feature Engineering Core Functions
+
+| Function | Framework | Description |
+|----------|-----------|-------------|
+| `StandardScaler()` | Scikit-learn | Standardize features |
+| `MinMaxScaler()` | Scikit-learn | Min-max scaling |
+| `LabelEncoder()` | Scikit-learn | Label encoding |
+| `OneHotEncoder()` | Scikit-learn | One-hot encoding |
+| `np.log()` | NumPy | Logarithmic transformation |
+| `df.apply()` | Pandas | Apply custom function |
+
+### Step 5: Exploratory Analysis Core Functions
+
+| Function | Framework | Description |
+|----------|-----------|-------------|
+| `df.corr()` | Pandas | Calculate correlation matrix |
+| `df.groupby()` | Pandas | Group and aggregate |
+| `sns.heatmap()` | Seaborn | Draw heatmap |
+| `sns.pairplot()` | Seaborn | Draw pairwise plots |
+| `sns.distplot()` | Seaborn | Draw distribution plot |
+| `df.pivot_table()` | Pandas | Create pivot table |
+
+### Step 6: Data Visualization Core Functions
+
+| Function | Framework | Description |
+|----------|-----------|-------------|
+| `plt.plot()` | Matplotlib | Draw line plot |
+| `plt.scatter()` | Matplotlib | Draw scatter plot |
+| `plt.hist()` | Matplotlib | Draw histogram |
+| `plt.boxplot()` | Matplotlib | Draw box plot |
+| `plt.bar()` | Matplotlib | Draw bar chart |
+| `df.plot()` | Pandas | Pandas plotting interface |
+| `plt.subplots()` | Matplotlib | Create subplots |
+
+### Step 7: Model Building Core Functions
+
+| Function | Framework | Description |
+|----------|-----------|-------------|
+| `train_test_split()` | Scikit-learn | Split training and test sets |
+| `LinearRegression()` | Scikit-learn | Linear regression model |
+| `RandomForestRegressor()` | Scikit-learn | Random forest regression |
+| `LogisticRegression()` | Scikit-learn | Logistic regression |
+| `model.fit()` | Scikit-learn | Train model |
+| `model.predict()` | Scikit-learn | Model prediction |
+| `cross_val_score()` | Scikit-learn | Cross-validation |
+
+### Step 8: Result Presentation Core Functions
+
+| Function | Framework | Description |
+|----------|-----------|-------------|
+| `mean_squared_error()` | Scikit-learn | Mean squared error |
+| `r2_score()` | Scikit-learn | R² score |
+| `accuracy_score()` | Scikit-learn | Accuracy score |
+| `confusion_matrix()` | Scikit-learn | Confusion matrix |
+| `classification_report()` | Scikit-learn | Classification report |
+| `plt.savefig()` | Matplotlib | Save figure |
+| `df.to_csv()` | Pandas | Export data |
+
+---
+
+*Mastering these core functions will greatly improve your data analysis efficiency and professional level.*

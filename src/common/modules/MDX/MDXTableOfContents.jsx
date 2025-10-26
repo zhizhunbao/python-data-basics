@@ -9,6 +9,7 @@ import { useMDXStore } from './store'
  * - 使用 zustand store 管理状态
  * - 自动检测 MDX 容器中的标题
  * - 支持滚动同步和高亮
+ * - 支持固定定位（sticky），滚动时保持可见
  * - 轻量级，性能优化
  */
 export function MDXTableOfContents({ 
@@ -20,7 +21,9 @@ export function MDXTableOfContents({
   smoothScroll = true,
   showLevelNumbers = false,
   customSelector = 'h1, h2, h3, h4, h5, h6',
-  containerSelector = 'article.prose, .mdx-content, [data-mdx-content]'
+  containerSelector = 'article.prose, .mdx-content, [data-mdx-content]',
+  sticky = true, // 新增：是否固定在页面
+  stickyTop = 100 // 新增：固定时距离顶部的位置
 }) {
   const { t } = useTranslation()
   const { 
@@ -79,9 +82,15 @@ export function MDXTableOfContents({
       // 找到当前可见的标题
       for (let i = headings.length - 1; i >= 0; i--) {
         const heading = headings[i]
-        if (heading.offsetTop <= scrollPosition) {
-          setActiveHeadingId(heading.id)
-          break
+        const element = document.getElementById(heading.id)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          const elementPosition = window.scrollY + rect.top
+          
+          if (elementPosition <= scrollPosition) {
+            setActiveHeadingId(heading.id)
+            break
+          }
         }
       }
     }, 10)
@@ -91,7 +100,9 @@ export function MDXTableOfContents({
   const scrollToHeading = useCallback((id) => {
     const element = document.getElementById(id)
     if (element) {
-      const targetPosition = element.offsetTop - scrollOffset
+      // 使用 getBoundingClientRect 获取元素相对于视口的的位置
+      const rect = element.getBoundingClientRect()
+      const targetPosition = window.scrollY + rect.top - scrollOffset
       
       if (smoothScroll) {
         window.scrollTo({
@@ -203,10 +214,21 @@ export function MDXTableOfContents({
     }
   }, [])
 
+  // 固定定位样式
+  const stickyStyle = sticky ? {
+    position: 'sticky',
+    top: `${stickyTop}px`,
+    maxHeight: `calc(100vh - ${stickyTop + 40}px)`,
+    overflowY: 'auto'
+  } : {}
+
   // 如果没有标题，显示空状态
   if (headings.length === 0) {
     return (
-      <div className={`p-4 ${className}`}>
+      <div 
+        className={`p-4 ${className}`}
+        style={stickyStyle}
+      >
         {showTitle && (
           <div className="mb-4">
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2 text-center">
@@ -232,6 +254,7 @@ export function MDXTableOfContents({
     <div 
       ref={tocRef}
       className={`p-4 ${className}`}
+      style={stickyStyle}
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >

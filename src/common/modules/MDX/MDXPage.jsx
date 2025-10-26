@@ -17,8 +17,56 @@ import { Mermaid } from './components/Mermaid'
 export function MDXPage({ MDXContent, className = '' }) {
   const { theme } = useLayoutStore()
   
+  // 辅助函数：从标题内容生成 ID
+  const getHeadingId = (children) => {
+    if (!children) return ''
+    
+    // 递归提取所有文本内容
+    const extractText = (node) => {
+      if (typeof node === 'string') return node
+      if (typeof node === 'number') return String(node)
+      if (Array.isArray(node)) return node.map(extractText).join('')
+      if (node && node.props && node.props.children) return extractText(node.props.children)
+      return ''
+    }
+    
+    const text = extractText(children)
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-\u4e00-\u9fa5]/g, '') // 支持中文字符
+      || 'heading'
+  }
+  
   // MDX 组件映射配置
   const components = {
+    // 标题组件 - 自动添加 id 属性
+    h1: (props) => {
+      const id = getHeadingId(props.children)
+      return <h1 id={id} {...props} />
+    },
+    h2: (props) => {
+      const id = getHeadingId(props.children)
+      return <h2 id={id} {...props} />
+    },
+    h3: (props) => {
+      const id = getHeadingId(props.children)
+      return <h3 id={id} {...props} />
+    },
+    h4: (props) => {
+      const id = getHeadingId(props.children)
+      return <h4 id={id} {...props} />
+    },
+    h5: (props) => {
+      const id = getHeadingId(props.children)
+      return <h5 id={id} {...props} />
+    },
+    h6: (props) => {
+      const id = getHeadingId(props.children)
+      return <h6 id={id} {...props} />
+    },
+    
     // 代码块组件 - 直接处理代码块
     pre: ({ children, ...props }) => {
       // 检查是否包含 code 元素且是代码块

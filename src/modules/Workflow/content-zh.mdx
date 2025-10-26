@@ -2,235 +2,303 @@
 
 ## 概述
 
-数据分析工作流程是数据分析项目的核心框架，涵盖了从数据收集到结果展示的完整过程。本模块将详细介绍数据分析的四个关键阶段，帮助您建立系统性的分析思维和方法。
+数据分析工作流程是数据分析项目的核心框架，涵盖了从数据收集到结果展示的完整过程。本模块将详细介绍数据分析的八个核心步骤，帮助您建立系统性的分析思维和方法。
 
-## 完整数据分析工作流示例
+## 核心分析步骤（8个阶段）
 
-通过实际代码示例了解完整的数据分析流程：
+### 步骤 1: 数据收集
+
+**使用框架：** Pandas
 
 ```python
-# 完整数据分析工作流示例
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix
 
-print("=== 完整数据分析工作流 ===")
+# 使用 Pandas 从 CSV 文件加载加利福尼亚房价数据集
+# 这是数据分析的第一步：获取数据源
+df = pd.read_csv('public/data/california_housing.csv')
 
-# 1. 数据收集阶段
-print("\n1. 数据收集阶段")
-print("加载电商用户行为数据...")
-
-# 模拟数据加载
-data = {
-    'user_id': range(1, 1001),
-    'age': np.random.randint(18, 65, 1000),
-    'gender': np.random.choice(['M', 'F'], 1000),
-    'session_duration': np.random.normal(300, 100, 1000),
-    'page_views': np.random.poisson(5, 1000),
-    'purchase_amount': np.random.exponential(50, 1000),
-    'is_purchased': np.random.choice([0, 1], 1000, p=[0.7, 0.3])
-}
-
-df = pd.DataFrame(data)
+# 查看数据基本信息
 print(f"数据形状: {df.shape}")
-print(f"数据概览:")
 print(df.head())
+```
 
-# 2. 数据处理阶段
-print("\n2. 数据处理阶段")
-print("数据清洗和预处理...")
+### 步骤 2: 数据概览
 
-# 处理异常值
-df = df[df['session_duration'] > 0]
-df = df[df['page_views'] >= 0]
-df = df[df['purchase_amount'] >= 0]
+**使用框架：** Pandas
+
+```python
+# 数据概览：检查数据形状、类型、缺失值等基本信息
+print(df.info())  # 数据类型和基本信息
+print(df.describe())  # 统计摘要
+print(df.isnull().sum())  # 缺失值统计
+```
+
+### 步骤 3: 数据清洗
+
+**使用框架：** Pandas
+
+```python
+# 数据清洗：处理缺失值、异常值、重复值
+
+# 处理缺失值（删除或填充）
+df = df.dropna()  # 删除包含缺失值的行
+# 或使用: df.fillna(df.mean())  # 用均值填充
+
+# 处理异常值（移除房价为负的记录）
+df = df[df['median_house_value'] > 0]
+
+# 删除重复值
+df = df.drop_duplicates()
+
+print(f"清洗后数据形状: {df.shape}")
+```
+
+### 步骤 4: 特征工程
+
+**使用框架：** NumPy + Pandas + Scikit-learn
+
+```python
+import numpy as np
+
+# 特征工程：创建新特征、数据标准化
 
 # 创建新特征
-df['avg_time_per_page'] = df['session_duration'] / df['page_views']
-df['high_value_user'] = (df['purchase_amount'] > df['purchase_amount'].quantile(0.8)).astype(int)
+df['rooms_per_household'] = df['total_rooms'] / df['households']
+df['bedrooms_per_room'] = df['total_bedrooms'] / df['total_rooms']
+df['population_per_household'] = df['population'] / df['households']
 
-print(f"处理后数据形状: {df.shape}")
-print("新特征创建完成")
+# 数据标准化
+from sklearn.preprocessing import StandardScaler
 
-# 3. 数据分析阶段
-print("\n3. 数据分析阶段")
-print("建立用户购买行为预测模型...")
+numeric_features = ['median_income', 'housing_median_age', 'total_rooms']
+scaler = StandardScaler()
+df[numeric_features] = scaler.fit_transform(df[numeric_features])
+
+print("特征工程完成")
+```
+
+### 步骤 5: 探索性分析
+
+**使用框架：** Matplotlib + Seaborn + Pandas
+
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 探索性分析：分布分析、相关性分析
+
+# 设置绘图风格
+sns.set_style("whitegrid")
+
+# 创建分析图表
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+
+# 1. 房价分布直方图
+axes[0, 0].hist(df['median_house_value'], bins=50, alpha=0.7)
+axes[0, 0].set_title('房价分布')
+axes[0, 0].set_xlabel('房价')
+axes[0, 0].set_ylabel('频数')
+
+# 2. 收入与房价关系散点图
+axes[0, 1].scatter(df['median_income'], df['median_house_value'], alpha=0.6)
+axes[0, 1].set_title('收入 vs 房价')
+
+# 3. 相关性热力图
+numeric_cols = ['median_house_value', 'median_income', 'total_rooms']
+corr_matrix = df[numeric_cols].corr()
+sns.heatmap(corr_matrix, annot=True, ax=axes[1, 0])
+
+plt.tight_layout()
+plt.show()
+```
+
+### 步骤 6: 数据可视化
+
+**使用框架：** Matplotlib + Pandas
+
+```python
+# 数据可视化：创建专业图表和仪表板
+
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+
+# 1. 房价箱线图
+axes[0, 0].boxplot(df['median_house_value'])
+axes[0, 0].set_title('房价箱线图')
+
+# 2. 收入分布
+axes[0, 1].hist(df['median_income'], bins=50, alpha=0.7)
+axes[0, 1].set_title('收入分布')
+
+# 3. 关系散点图
+axes[1, 0].scatter(df['population'], df['median_house_value'], alpha=0.5)
+axes[1, 0].set_title('人口 vs 房价')
+
+plt.tight_layout()
+plt.show()
+```
+
+### 步骤 7: 模型构建
+
+**使用框架：** Scikit-learn + Pandas + NumPy
+
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# 模型构建：训练房价预测模型
 
 # 准备特征和目标变量
-features = ['age', 'session_duration', 'page_views', 'avg_time_per_page']
-X = df[features]
-y = df['is_purchased']
+feature_cols = ['median_income', 'housing_median_age', 'total_rooms']
+X = df[feature_cols]
+y = df['median_house_value']
 
 # 分割数据
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 训练模型
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+# 训练线性回归模型
+model = LinearRegression()
 model.fit(X_train, y_train)
 
-# 预测和评估
+# 预测
 y_pred = model.predict(X_test)
-print("\n模型性能评估:")
-print(classification_report(y_test, y_pred))
 
-# 特征重要性
-feature_importance = pd.DataFrame({
-    'feature': features,
-    'importance': model.feature_importances_
-}).sort_values('importance', ascending=False)
+# 模型评估
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
 
-print("\n特征重要性:")
-print(feature_importance)
+print(f"RMSE: {rmse:.2f}")
+print(f"R² 得分: {r2:.4f}")
+```
 
-# 4. 结果展示阶段
-print("\n4. 结果展示阶段")
-print("生成分析报告和可视化...")
+### 步骤 8: 结果展示
 
-# 创建可视化
+**使用框架：** Matplotlib + Pandas
+
+```python
+# 结果展示：模型评估、报告生成
+
 fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-fig.suptitle('电商用户行为分析报告', fontsize=16)
 
-# 用户年龄分布
-axes[0, 0].hist(df['age'], bins=20, alpha=0.7, color='skyblue')
-axes[0, 0].set_title('用户年龄分布')
-axes[0, 0].set_xlabel('年龄')
-axes[0, 0].set_ylabel('用户数量')
+# 1. 预测值 vs 真实值
+axes[0, 0].scatter(y_test, y_pred, alpha=0.6)
+axes[0, 0].plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
+axes[0, 0].set_xlabel('真实值')
+axes[0, 0].set_ylabel('预测值')
+axes[0, 0].set_title(f'预测值 vs 真实值 (R² = {r2:.3f})')
 
-# 购买行为对比
-purchase_by_gender = df.groupby('gender')['is_purchased'].mean()
-axes[0, 1].bar(purchase_by_gender.index, purchase_by_gender.values, color=['lightcoral', 'lightblue'])
-axes[0, 1].set_title('性别购买率对比')
-axes[0, 1].set_ylabel('购买率')
-
-# 会话时长与购买关系
-axes[1, 0].scatter(df['session_duration'], df['purchase_amount'], alpha=0.6)
-axes[1, 0].set_title('会话时长与购买金额关系')
-axes[1, 0].set_xlabel('会话时长(秒)')
-axes[1, 0].set_ylabel('购买金额')
-
-# 特征重要性
-axes[1, 1].barh(feature_importance['feature'], feature_importance['importance'])
-axes[1, 1].set_title('特征重要性')
-axes[1, 1].set_xlabel('重要性')
+# 2. 残差分布
+residuals = y_test - y_pred
+axes[0, 1].hist(residuals, bins=30, alpha=0.7)
+axes[0, 1].set_title('残差分布')
+axes[0, 1].axvline(x=0, color='r', linestyle='--')
 
 plt.tight_layout()
 plt.show()
 
-# 5. 业务洞察和建议
-print("\n=== 业务洞察和建议 ===")
-print(f"总用户数: {len(df)}")
-print(f"购买用户比例: {df['is_purchased'].mean():.2%}")
-print(f"平均购买金额: {df[df['is_purchased']==1]['purchase_amount'].mean():.2f}")
-print(f"平均会话时长: {df['session_duration'].mean():.2f}秒")
-
-print("\n关键发现:")
-print("1. 会话时长是影响购买决策的重要因素")
-print("2. 页面浏览数与购买概率呈正相关")
-print("3. 年龄分布相对均匀，无明显年龄偏好")
-print("4. 性别对购买行为有一定影响")
-
-print("\n行动建议:")
-print("1. 优化页面加载速度，延长用户会话时长")
-print("2. 改进页面内容，增加页面浏览量")
-print("3. 针对不同性别用户制定差异化营销策略")
-print("4. 建立用户行为预测模型，实现精准营销")
-
-print("\n=== 分析完成 ===")
+# 生成总结报告
+print("\n数据分析项目总结报告")
+print(f"模型性能: RMSE={rmse:.2f}, R²={r2:.4f}")
 ```
-
-## 学习目标
-
-通过本模块的学习，您将能够：
-
-- **掌握完整流程**：了解数据分析项目的完整生命周期
-- **数据收集技能**：学会从各种数据源获取和初步探索数据
-- **数据处理能力**：掌握数据清洗、转换和特征工程
-- **分析建模技术**：学会统计分析和机器学习建模
-- **结果展示技巧**：能够有效展示和解释分析结果
-
-## 核心内容
-
-### 1. 数据收集阶段
-
-数据分析的第一步，包括：
-
-- **数据获取**：从数据库、API、文件等获取数据
-- **数据概览**：了解数据的基本信息和结构
-- **质量评估**：检查数据的完整性和准确性
-- **初步探索**：通过统计和可视化了解数据特征
-
-### 2. 数据处理阶段
-
-为分析做准备的数据预处理：
-
-- **数据清洗**：处理缺失值、异常值和重复值
-- **数据转换**：类型转换、标准化、归一化
-- **特征工程**：创建新特征和变量
-- **数据分割**：训练集、测试集划分
-
-### 3. 数据分析阶段
-
-项目的核心环节：
-
-- **描述性分析**：统计摘要和分布分析
-- **探索性分析**：变量关系和相关分析
-- **建模分析**：建立预测模型和分类模型
-- **模型评估**：性能评估和结果验证
-
-### 4. 结果展示阶段
-
-确保分析结果有效传达：
-
-- **数据可视化**：创建清晰的图表和仪表板
-- **报告撰写**：结构化分析报告
-- **结果解释**：业务含义和洞察
-- **行动建议**：基于分析结果的建议
-
-## 实践案例
-
-电商用户行为分析项目：
-
-1. **数据收集**：获取电商用户行为数据
-2. **数据处理**：清洗和预处理用户数据
-3. **数据分析**：建立用户购买行为预测模型
-4. **结果展示**：生成分析报告和可视化
-
-## 电商用户行为数据预览
-
-| 用户ID | 年龄 | 性别 | 会话时长 | 页面浏览 | 购买金额 | 是否购买 |
-|--------|------|------|----------|----------|----------|----------|
-| U001 | 28 | F | 320 | 8 | 299 | 是 |
-| U002 | 35 | M | 180 | 3 | 0 | 否 |
-| U003 | 42 | F | 450 | 12 | 599 | 是 |
-| U004 | 25 | M | 120 | 2 | 0 | 否 |
-| U005 | 38 | F | 380 | 9 | 199 | 是 |
-
-## 学习路径
-
-1. **概览**：了解完整数据分析工作流程
-2. **数据收集**：学习数据获取和初步探索
-3. **数据处理**：掌握数据清洗和预处理技术
-4. **数据分析**：学会统计分析和建模方法
-5. **结果展示**：掌握可视化和报告技巧
-
-## 关键技能
-
-- 数据收集和探索
-- 数据清洗和预处理
-- 统计分析和建模
-- 结果可视化和解释
-
-## 学习建议
-
-- **项目导向**：通过完整项目学习工作流程
-- **实践为主**：每个阶段都要动手实践
-- **业务思维**：关注业务价值和实际应用
-- **工具熟练**：熟练掌握各种分析工具
 
 ---
 
 *掌握完整的数据分析工作流程将为您的数据分析职业生涯奠定坚实基础。*
+
+## 核心函数
+
+### 步骤 1: 数据收集核心函数
+
+| 函数 | 所属框架 | 功能说明 |
+|------|---------|---------|
+| `pd.read_csv()` | Pandas | 从CSV文件读取数据 |
+| `pd.read_excel()` | Pandas | 从Excel文件读取数据 |
+| `pd.read_json()` | Pandas | 从JSON文件读取数据 |
+| `pd.read_sql()` | Pandas | 从SQL数据库读取数据 |
+| `df.head()` | Pandas | 查看数据前几行 |
+
+### 步骤 2: 数据概览核心函数
+
+| 函数 | 所属框架 | 功能说明 |
+|------|---------|---------|
+| `df.info()` | Pandas | 显示数据类型和基本信息 |
+| `df.describe()` | Pandas | 显示统计摘要 |
+| `df.shape` | Pandas | 获取数据维度 |
+| `df.columns` | Pandas | 获取列名 |
+| `df.dtypes` | Pandas | 获取数据类型 |
+| `df.isnull().sum()` | Pandas | 统计缺失值 |
+| `df.value_counts()` | Pandas | 统计唯一值数量 |
+
+### 步骤 3: 数据清洗核心函数
+
+| 函数 | 所属框架 | 功能说明 |
+|------|---------|---------|
+| `df.dropna()` | Pandas | 删除缺失值 |
+| `df.fillna()` | Pandas | 填充缺失值 |
+| `df.drop_duplicates()` | Pandas | 删除重复值 |
+| `df.replace()` | Pandas | 替换值 |
+| `df.query()` | Pandas | 查询过滤数据 |
+| `df.drop()` | Pandas | 删除列或行 |
+
+### 步骤 4: 特征工程核心函数
+
+| 函数 | 所属框架 | 功能说明 |
+|------|---------|---------|
+| `StandardScaler()` | Scikit-learn | 标准化特征 |
+| `MinMaxScaler()` | Scikit-learn | 最小最大缩放 |
+| `LabelEncoder()` | Scikit-learn | 标签编码 |
+| `OneHotEncoder()` | Scikit-learn | 独热编码 |
+| `np.log()` | NumPy | 对数变换 |
+| `df.apply()` | Pandas | 应用自定义函数 |
+
+### 步骤 5: 探索性分析核心函数
+
+| 函数 | 所属框架 | 功能说明 |
+|------|---------|---------|
+| `df.corr()` | Pandas | 计算相关系数矩阵 |
+| `df.groupby()` | Pandas | 分组聚合 |
+| `sns.heatmap()` | Seaborn | 绘制热力图 |
+| `sns.pairplot()` | Seaborn | 绘制变量关系图 |
+| `sns.distplot()` | Seaborn | 绘制分布图 |
+| `df.pivot_table()` | Pandas | 创建数据透视表 |
+
+### 步骤 6: 数据可视化核心函数
+
+| 函数 | 所属框架 | 功能说明 |
+|------|---------|---------|
+| `plt.plot()` | Matplotlib | 绘制折线图 |
+| `plt.scatter()` | Matplotlib | 绘制散点图 |
+| `plt.hist()` | Matplotlib | 绘制直方图 |
+| `plt.boxplot()` | Matplotlib | 绘制箱线图 |
+| `plt.bar()` | Matplotlib | 绘制柱状图 |
+| `df.plot()` | Pandas | Pandas绘图接口 |
+| `plt.subplots()` | Matplotlib | 创建子图 |
+
+### 步骤 7: 模型构建核心函数
+
+| 函数 | 所属框架 | 功能说明 |
+|------|---------|---------|
+| `train_test_split()` | Scikit-learn | 分割训练集和测试集 |
+| `LinearRegression()` | Scikit-learn | 线性回归模型 |
+| `RandomForestRegressor()` | Scikit-learn | 随机森林回归 |
+| `LogisticRegression()` | Scikit-learn | 逻辑回归 |
+| `model.fit()` | Scikit-learn | 训练模型 |
+| `model.predict()` | Scikit-learn | 模型预测 |
+| `cross_val_score()` | Scikit-learn | 交叉验证 |
+
+### 步骤 8: 结果展示核心函数
+
+| 函数 | 所属框架 | 功能说明 |
+|------|---------|---------|
+| `mean_squared_error()` | Scikit-learn | 均方误差 |
+| `r2_score()` | Scikit-learn | R²得分 |
+| `accuracy_score()` | Scikit-learn | 准确率 |
+| `confusion_matrix()` | Scikit-learn | 混淆矩阵 |
+| `classification_report()` | Scikit-learn | 分类报告 |
+| `plt.savefig()` | Matplotlib | 保存图表 |
+| `df.to_csv()` | Pandas | 导出数据 |
+
+---
+
+*掌握这些核心函数，将大大提高您的数据分析效率和专业水平。*
