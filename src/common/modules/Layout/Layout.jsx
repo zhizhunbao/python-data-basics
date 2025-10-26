@@ -23,12 +23,10 @@ export function Layout({ children }) {
       
       {/* Main Layout - Docusaurus Style */}
       <div className="flex min-h-screen pt-16">
-        {/* Left Sidebar - Fixed Width */}
-        <aside className={`transition-all duration-300 ${
-          sidebarCollapsed ? 'w-0 -ml-64' : 'w-64'
-        } lg:w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex-shrink-0`}>
+        {/* 侧边栏容器 - 用于抵消固定定位 */}
+        <div className={`hidden md:block ${sidebarCollapsed ? 'w-0' : 'w-64'} transition-all duration-300 flex-shrink-0`}>
           <Sidebar />
-        </aside>
+        </div>
         
         {/* Main Content Area */}
         <main className="flex-1 flex min-w-0">
@@ -42,6 +40,11 @@ export function Layout({ children }) {
           </div>
           
         </main>
+      </div>
+      
+      {/* 移动端侧边栏 */}
+      <div className="md:hidden">
+        <Sidebar />
       </div>
     </div>
   )

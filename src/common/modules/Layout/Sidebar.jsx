@@ -53,7 +53,7 @@ export function Sidebar() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
-  const { currentModule, setCurrentModule, mobileMenuOpen, theme } = useLayoutStore()
+  const { currentModule, setCurrentModule, mobileMenuOpen, theme, sidebarCollapsed } = useLayoutStore()
 
   // 根据当前路径自动设置当前模块
   useEffect(() => {
@@ -105,7 +105,9 @@ export function Sidebar() {
   return (
     <>
       {/* 桌面端侧边栏 */}
-      <aside className={`hidden md:block w-64 border-r p-6 transition-colors duration-200 fixed left-0 top-16 z-30 ${
+      <aside className={`hidden md:block w-64 border-r p-6 transition-all duration-300 fixed left-0 top-16 z-30 ${
+        sidebarCollapsed ? '-translate-x-full' : 'translate-x-0'
+      } ${
         theme === 'dark' 
           ? 'bg-slate-900 border-slate-700' 
           : 'bg-white border-gray-200'

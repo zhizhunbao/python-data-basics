@@ -49,7 +49,7 @@ export function Header() {
       <div className="flex items-center space-x-2">
         {/* 语言切换 */}
         <button
-          onClick={() => setLanguage(language === 'zh-CN' ? 'en' : 'zh-CN')}
+          onClick={() => setLanguage(language === 'en' ? 'zh-CN' : 'en')}
           className={`p-2 rounded-lg transition-all duration-200 ${
             theme === 'dark' 
               ? 'hover:bg-gray-800 text-gray-300 hover:text-white' 
