@@ -296,27 +296,131 @@ unique_data = list(set(data))            # Deduplicate
 import numpy as np
 
 arr = np.array([1, 2, 3, 4, 5])
+matrix = np.array([[1, 2], [3, 4]])
 
-# Array operations
-arr.reshape(5, 1)        # Reshape (5 rows 1 column)
-arr.flatten()            # Flatten
-np.concatenate([arr1, arr2])  # Concatenate
+# ======================================
+# 📐 Basic Array Operations
+# ======================================
+arr.reshape(5, 1)           # Reshape
+arr.flatten()               # Flatten
+np.concatenate([arr1, arr2]) # Concatenate
+np.vstack([arr1, arr2])      # Vertical stack
+np.hstack([arr1, arr2])      # Horizontal stack
+arr.T                        # Transpose
+np.split(arr, 3)            # Split
+np.array_split(arr, 3)      # Unequal split
 
-# Statistical functions
-np.sum(arr)              # Sum
-np.mean(arr)             # Mean
-np.std(arr)              # Standard deviation
-np.median(arr)           # Median
-np.min(arr), np.max(arr) # Min/Max
+# ======================================
+# 📊 Statistical Functions
+# ======================================
+np.sum(arr), np.mean(arr)   # Sum, Mean
+np.std(arr), np.var(arr)    # Std dev, Variance
+np.median(arr)              # Median
+np.min(arr), np.max(arr)    # Min/Max
+np.percentile(arr, 75)      # Percentile
+np.histogram(arr)           # Histogram
+np.unique(arr)              # Unique values
+np.bincount(arr)            # Count
 
-# Conditional operations
-np.where(arr > 3, 'high', 'low')  # Conditional assignment
-arr[arr > 3]                      # Boolean indexing
+# ======================================
+# 🔗 Covariance and Correlation
+# ======================================
+np.cov(matrix)              # Covariance matrix
+np.corrcoef(matrix)         # Correlation matrix
 
-# Mathematical operations
-np.sin(arr), np.cos(arr)  # Trigonometric functions
-np.exp(arr)               # Exponential
-np.log(arr)               # Logarithm
+# ======================================
+# 🎯 Conditional Filtering (Boolean Indexing)
+# ======================================
+arr[arr > 3]                 # Conditional filter
+np.where(arr > 3, 1, 0)     # Conditional assignment
+np.where(arr > 3)           # Return indices
+np.select([arr < 3, arr > 7], [0, 1], 2)  # Multiple conditions
+
+# ======================================
+# 🔢 Linear Algebra (np.linalg)
+# ======================================
+np.linalg.solve(A, b)       # Solve Ax=b
+np.linalg.inv(matrix)       # Matrix inverse
+np.linalg.pinv(matrix)     # Pseudo-inverse
+np.linalg.eig(matrix)       # Eigenvalues/eigenvectors
+np.linalg.svd(matrix)       # SVD decomposition
+np.linalg.qr(matrix)        # QR decomposition
+np.linalg.det(matrix)       # Determinant
+np.linalg.matrix_rank(matrix) # Matrix rank
+np.linalg.norm(arr)         # Norm
+np.linalg.lstsq(A, b)       # Least squares
+
+# ======================================
+# 📈 Cumulative Functions
+# ======================================
+np.cumsum(arr)              # Cumulative sum
+np.cumprod(arr)             # Cumulative product
+np.cummax(arr)              # Cumulative max
+np.cummin(arr)              # Cumulative min
+np.diff(arr)                # Difference
+np.gradient(arr)            # Gradient
+
+# ======================================
+# 🔄 Sorting and Search
+# ======================================
+np.sort(arr)                # Sort
+np.argsort(arr)             # Sort indices
+np.searchsorted(arr, 3)     # Binary search
+np.partition(arr, 2)        # Partial sort
+np.argmax(arr)              # Index of max
+np.argmin(arr)              # Index of min
+
+# ======================================
+# 🎨 Mathematical Functions
+# ======================================
+np.sin(arr), np.cos(arr), np.tan(arr)  # Trigonometry
+np.arcsin(arr)              # Inverse trigonometry
+np.exp(arr), np.log(arr)    # Exponential, Logarithm
+np.log10(arr), np.log2(arr) # Log base 10, 2
+np.power(arr, 2)            # Power
+np.sqrt(arr), np.cbrt(arr)  # Square root, Cube root
+np.abs(arr), np.sign(arr)   # Absolute, Sign
+np.floor(arr), np.ceil(arr), np.round(arr)  # Rounding
+
+# ======================================
+# 🎵 Signal Processing (np.fft)
+# ======================================
+np.fft.fft(arr)             # Fast Fourier Transform
+np.fft.ifft(arr)            # Inverse FFT
+np.fft.fft2(matrix)         # 2D FFT
+np.fft.fftfreq(len(arr))    # Frequency axis
+np.convolve(arr1, arr2)     # Convolution
+np.correlate(arr1, arr2)    # Correlation
+
+# ======================================
+# 🎲 Random Numbers (np.random)
+# ======================================
+np.random.rand(5)           # Uniform [0,1)
+np.random.randn(5)          # Standard normal
+np.random.randint(0, 10, 5) # Random integers
+np.random.choice(arr, 3)    # Random choice
+np.random.shuffle(arr)      # Shuffle
+np.random.seed(42)          # Set seed
+
+# ======================================
+# 🌐 Broadcasting (Auto-dimension expansion)
+# ======================================
+arr + 10                    # Scalar broadcasting
+arr * np.array([1, 2])      # Vector broadcasting
+matrix * arr                # Matrix broadcasting
+np.broadcast(arr1, arr2)    # Check broadcast shape
+
+# ======================================
+# 🔧 Utility Functions
+# ======================================
+np.zeros((3, 3))           # Zeros array
+np.ones((3, 3))            # Ones array
+np.eye(3)                   # Identity matrix
+np.diag([1, 2, 3])         # Diagonal matrix
+np.full((3, 3), 5)         # Full array
+np.arange(0, 10, 2)         # Arange
+np.linspace(0, 10, 5)      # Linspace
+np.meshgrid(x, y)          # Meshgrid
 ```
 
 #### 📊 Pandas Common Functions Quick Reference

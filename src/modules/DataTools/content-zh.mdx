@@ -70,10 +70,14 @@ import numpy as np
 ```python
 import numpy as np
 
-# 从CSV读取价格数据（1000个交易日）
+# 示例：10天的价格数据（实际可用1000个交易日）
+sample_prices = np.array([100.0, 101.5, 99.8, 102.3, 101.0, 
+                           103.2, 104.5, 103.8, 102.0, 105.2])
+
+# 或者生成1000个交易日的模拟数据
 prices = np.array([100 + np.cumsum(np.random.randn(1000) * 0.02)]).flatten()
 
-# 计算收益率
+# 计算收益率（用diff一行搞定）
 returns = np.diff(prices) / prices[:-1] * 100
 
 # 统计运算 - 向量化，极快
@@ -83,10 +87,6 @@ volatility = np.std(returns) * np.sqrt(252)  # 年化波动率
 # 批量条件筛选
 positive_days = returns[returns > 0]
 negative_days = returns[returns < 0]
-
-# 矩阵运算：计算协方差矩阵（多个资产的收益率）
-asset_returns = np.random.randn(100, 252)  # 100只股票，252个交易日
-cov_matrix = np.cov(asset_returns)  # 协方差矩阵，极快
 
 print(f"平均收益率: {mean_return:.3f}%")
 print(f"年化波动率: {volatility:.1f}%")
@@ -296,27 +296,131 @@ unique_data = list(set(data))            # 去重
 import numpy as np
 
 arr = np.array([1, 2, 3, 4, 5])
+matrix = np.array([[1, 2], [3, 4]])
 
-# 数组操作
-arr.reshape(5, 1)        # 重塑形状 (5行1列)
-arr.flatten()            # 展平
-np.concatenate([arr1, arr2])  # 拼接
+# ======================================
+# 📐 基础数组操作
+# ======================================
+arr.reshape(5, 1)           # 重塑形状
+arr.flatten()               # 展平
+np.concatenate([arr1, arr2]) # 拼接
+np.vstack([arr1, arr2])      # 垂直堆叠
+np.hstack([arr1, arr2])      # 水平堆叠
+arr.T                        # 转置
+np.split(arr, 3)            # 分割
+np.array_split(arr, 3)      # 不等分割
 
-# 统计函数
-np.sum(arr)              # 求和
-np.mean(arr)             # 平均值
-np.std(arr)              # 标准差
-np.median(arr)           # 中位数
-np.min(arr), np.max(arr) # 最值
+# ======================================
+# 📊 统计函数
+# ======================================
+np.sum(arr), np.mean(arr)   # 求和、平均值
+np.std(arr), np.var(arr)    # 标准差、方差
+np.median(arr)              # 中位数
+np.min(arr), np.max(arr)    # 最值
+np.percentile(arr, 75)      # 分位数
+np.histogram(arr)           # 直方图
+np.unique(arr)              # 去重并排序
+np.bincount(arr)            # 计数
 
-# 条件操作
-np.where(arr > 3, 'high', 'low')  # 条件赋值
-arr[arr > 3]                      # 布尔索引
+# ======================================
+# 🔗 协方差和相关性
+# ======================================
+np.cov(matrix)              # 协方差矩阵
+np.corrcoef(matrix)         # 相关系数矩阵
 
-# 数学运算
-np.sin(arr), np.cos(arr)  # 三角函数
-np.exp(arr)               # 指数
-np.log(arr)               # 对数
+# ======================================
+# 🎯 条件筛选（布尔索引）
+# ======================================
+arr[arr > 3]                 # 条件筛选
+np.where(arr > 3, 1, 0)     # 条件赋值
+np.where(arr > 3)           # 返回索引
+np.select([arr < 3, arr > 7], [0, 1], 2)  # 多条件
+
+# ======================================
+# 🔢 线性代数 (np.linalg)
+# ======================================
+np.linalg.solve(A, b)       # 解方程 Ax=b
+np.linalg.inv(matrix)       # 矩阵求逆
+np.linalg.pinv(matrix)     # 伪逆矩阵
+np.linalg.eig(matrix)       # 特征值/特征向量
+np.linalg.svd(matrix)       # SVD奇异值分解
+np.linalg.qr(matrix)        # QR分解
+np.linalg.det(matrix)       # 行列式
+np.linalg.matrix_rank(matrix) # 矩阵的秩
+np.linalg.norm(arr)         # 范数
+np.linalg.lstsq(A, b)       # 最小二乘法
+
+# ======================================
+# 📈 累积函数
+# ======================================
+np.cumsum(arr)              # 累积和
+np.cumprod(arr)             # 累积乘积
+np.cummax(arr)              # 累积最大值
+np.cummin(arr)              # 累积最小值
+np.diff(arr)                # 差分
+np.gradient(arr)            # 梯度
+
+# ======================================
+# 🔄 排序和搜索
+# ======================================
+np.sort(arr)                # 排序
+np.argsort(arr)             # 排序索引
+np.searchsorted(arr, 3)     # 二分搜索
+np.partition(arr, 2)        # 部分排序
+np.argmax(arr)              # 最大值的索引
+np.argmin(arr)              # 最小值的索引
+
+# ======================================
+# 🎨 数学函数
+# ======================================
+np.sin(arr), np.cos(arr), np.tan(arr)  # 三角函数
+np.arcsin(arr)              # 反三角函数
+np.exp(arr), np.log(arr)    # 指数、对数
+np.log10(arr), np.log2(arr) # 常用对数
+np.power(arr, 2)            # 幂运算
+np.sqrt(arr), np.cbrt(arr)  # 平方根、立方根
+np.abs(arr), np.sign(arr)   # 绝对值、符号
+np.floor(arr), np.ceil(arr), np.round(arr)  # 舍入
+
+# ======================================
+# 🎵 信号处理 (np.fft)
+# ======================================
+np.fft.fft(arr)             # 快速傅里叶变换
+np.fft.ifft(arr)            # 逆FFT
+np.fft.fft2(matrix)         # 2D FFT
+np.fft.fftfreq(len(arr))    # 频率轴
+np.convolve(arr1, arr2)     # 卷积
+np.correlate(arr1, arr2)    # 相关
+
+# ======================================
+# 🎲 随机数 (np.random)
+# ======================================
+np.random.rand(5)           # [0,1)均匀分布
+np.random.randn(5)          # 标准正态分布
+np.random.randint(0, 10, 5) # 随机整数
+np.random.choice(arr, 3)    # 随机选择
+np.random.shuffle(arr)      # 随机打乱
+np.random.seed(42)          # 设置随机种子
+
+# ======================================
+# 🌐 广播机制（自动扩展维度）
+# ======================================
+arr + 10                    # 标量广播
+arr * np.array([1, 2])      # 向量广播
+matrix * arr                # 矩阵广播
+np.broadcast(arr1, arr2)    # 查看广播形状
+
+# ======================================
+# 🔧 实用工具
+# ======================================
+np.zeros((3, 3))           # 全零数组
+np.ones((3, 3))            # 全一数组
+np.eye(3)                   # 单位矩阵
+np.diag([1, 2, 3])         # 对角矩阵
+np.full((3, 3), 5)         # 填充数组
+np.arange(0, 10, 2)         # 等差数列
+np.linspace(0, 10, 5)      # 等分区间
+np.meshgrid(x, y)          # 网格
 ```
 
 #### 📊 Pandas 常用函数速查
