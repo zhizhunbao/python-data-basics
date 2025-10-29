@@ -32,6 +32,7 @@ export default defineConfig({
       '@codeBlock': resolve(__dirname, 'src/common/modules/CodeBlock'),
       '@dataTable': resolve(__dirname, 'src/common/modules/DataTable'),
       '@pythonChart': resolve(__dirname, 'src/common/modules/PythonChart'),
+      '@charts': resolve(__dirname, 'src/common/modules/Charts'),
       // 工具和配置别名
       '@utils': resolve(__dirname, 'src/common/utils'),
       '@i18n': resolve(__dirname, 'src/common/i18n'),

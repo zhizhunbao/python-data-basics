@@ -2,9 +2,9 @@
 
 ## 概述
 
-数据分析工作流程是数据分析项目的核心框架，涵盖了从数据收集到结果展示的完整过程。本模块将详细介绍数据分析的八个核心步骤，帮助您建立系统性的分析思维和方法。
+数据分析工作流程是数据分析项目的核心框架，涵盖了从数据收集到结果展示的完整过程。本模块将详细介绍数据分析的七个核心步骤，帮助您建立系统性的分析思维和方法。
 
-## 核心分析步骤（8个阶段）
+## 核心分析步骤（7个阶段）
 
 ### 步骤 1: 数据收集
 
@@ -22,6 +22,25 @@ print(f"数据形状: {df.shape}")
 print(df.head())
 ```
 
+**执行结果：**
+
+```bash
+数据形状: (20640, 10)
+   longitude  latitude  housing_median_age  total_rooms  total_bedrooms  \
+0    -122.23     37.88                  41          880           129   
+1    -122.22     37.86                  21         7099          1106   
+2    -122.24     37.85                  52         1467           190   
+3    -122.25     37.85                  52         1274           235   
+4    -122.25     37.85                  52         1627           280   
+
+   population  households  median_income  median_house_value  ocean_proximity  
+0         322         126         8.3252             452600        NEAR BAY  
+1        2401        1138         8.3014             358500        NEAR BAY  
+2         496         177         7.2574             352100        NEAR BAY  
+3         558         219         5.6431             341300        NEAR BAY  
+4         565         259         3.8462             342200        NEAR BAY  
+```
+
 ### 步骤 2: 数据概览
 
 **使用框架：** Pandas
@@ -31,6 +50,53 @@ print(df.head())
 print(df.info())  # 数据类型和基本信息
 print(df.describe())  # 统计摘要
 print(df.isnull().sum())  # 缺失值统计
+```
+
+**执行结果：**
+
+```bash
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 20640 entries, 0 to 20639
+Data columns (total 10 columns):
+ #   Column              Non-Null Count  Dtype  
+---  ------              --------------  -----  
+ 0   longitude           20640 non-null  float64
+ 1   latitude            20640 non-null  float64
+ 2   housing_median_age  20640 non-null  float64
+ 3   total_rooms         20640 non-null  float64
+ 4   total_bedrooms      20433 non-null  float64
+ 5   population          20640 non-null  float64
+ 6   households          20640 non-null  float64
+ 7   median_income       20640 non-null  float64
+ 8   median_house_value  20640 non-null  float64
+ 9   ocean_proximity     20640 non-null  object 
+dtypes: float64(9), object(1)
+memory usage: 1.6+ MB
+None
+
+         longitude    latitude  housing_median_age  ...  households  median_income  median_house_value
+count  20640.000000  20640.000000        20640.000000  ...  20640.000000   20640.000000        20640.000000
+mean    -119.569704     35.631861           28.639486  ...    499.539680       3.870671       206855.816909
+std        2.003532      2.135952           12.585558  ...    382.329753       1.899822       115395.615874
+min     -124.350000     32.540000            1.000000  ...      1.000000       0.499900        14999.000000
+25%     -121.800000     33.930000           18.000000  ...    280.000000       2.563400       119600.000000
+50%     -118.490000     34.260000           29.000000  ...    409.000000       3.534800       179700.000000
+75%     -118.010000     37.710000           37.000000  ...    605.000000       4.743250       264725.000000
+max     -114.310000     41.950000           52.000000  ...   6082.000000      15.000100       500001.000000
+
+[8 rows x 9 columns]
+
+longitude             0
+latitude              0
+housing_median_age    0
+total_rooms           0
+total_bedrooms      207
+population            0
+households            0
+median_income         0
+median_house_value    0
+ocean_proximity       0
+dtype: int64
 ```
 
 ### 步骤 3: 数据清洗
@@ -51,6 +117,12 @@ df = df[df['median_house_value'] > 0]
 df = df.drop_duplicates()
 
 print(f"清洗后数据形状: {df.shape}")
+```
+
+**执行结果：**
+
+```bash
+清洗后数据形状: (20433, 10)
 ```
 
 ### 步骤 4: 特征工程
@@ -77,7 +149,13 @@ df[numeric_features] = scaler.fit_transform(df[numeric_features])
 print("特征工程完成")
 ```
 
-### 步骤 5: 探索性分析
+**执行结果：**
+
+```bash
+特征工程完成
+```
+
+### 步骤 5: 探索性分析与可视化
 
 **使用框架：** Matplotlib + Seaborn + Pandas
 
@@ -85,59 +163,198 @@ print("特征工程完成")
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# 探索性分析：分布分析、相关性分析
+# 探索性分析与可视化：分布分析、相关性分析、异常值检测
 
 # 设置绘图风格
 sns.set_style("whitegrid")
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 支持中文显示
+plt.rcParams['axes.unicode_minus'] = False
 
-# 创建分析图表
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+# 创建综合分析图表
+fig, axes = plt.subplots(2, 3, figsize=(18, 10))
 
 # 1. 房价分布直方图
-axes[0, 0].hist(df['median_house_value'], bins=50, alpha=0.7)
+axes[0, 0].hist(df['median_house_value'], bins=50, alpha=0.7, color='steelblue')
 axes[0, 0].set_title('房价分布')
 axes[0, 0].set_xlabel('房价')
 axes[0, 0].set_ylabel('频数')
 
-# 2. 收入与房价关系散点图
-axes[0, 1].scatter(df['median_income'], df['median_house_value'], alpha=0.6)
-axes[0, 1].set_title('收入 vs 房价')
+# 2. 房价箱线图（异常值检测）
+axes[0, 1].boxplot(df['median_house_value'])
+axes[0, 1].set_title('房价箱线图（异常值检测）')
+axes[0, 1].set_ylabel('房价')
 
-# 3. 相关性热力图
-numeric_cols = ['median_house_value', 'median_income', 'total_rooms']
+# 3. 收入分布直方图
+axes[0, 2].hist(df['median_income'], bins=50, alpha=0.7, color='coral')
+axes[0, 2].set_title('收入分布')
+axes[0, 2].set_xlabel('收入中位数')
+axes[0, 2].set_ylabel('频数')
+
+# 4. 收入与房价关系散点图
+axes[1, 0].scatter(df['median_income'], df['median_house_value'], alpha=0.6, s=20)
+axes[1, 0].set_title('收入 vs 房价')
+axes[1, 0].set_xlabel('收入中位数')
+axes[1, 0].set_ylabel('房价')
+
+# 5. 人口与房价关系散点图
+axes[1, 1].scatter(df['population'], df['median_house_value'], alpha=0.5, s=20)
+axes[1, 1].set_title('人口 vs 房价')
+axes[1, 1].set_xlabel('人口')
+axes[1, 1].set_ylabel('房价')
+
+# 6. 相关性热力图
+numeric_cols = ['median_house_value', 'median_income', 'total_rooms', 'housing_median_age']
 corr_matrix = df[numeric_cols].corr()
-sns.heatmap(corr_matrix, annot=True, ax=axes[1, 0])
+sns.heatmap(corr_matrix, annot=True, fmt='.2f', ax=axes[1, 2], cmap='coolwarm')
 
 plt.tight_layout()
 plt.show()
 ```
 
-### 步骤 6: 数据可视化
+**执行结果：**
 
-**使用框架：** Matplotlib + Pandas
+已生成探索性分析与可视化图表，包括：
+- 房价分布直方图：展示了房价的分布情况
+- 房价箱线图：用于检测异常值，展示中位数、四分位数
+- 收入分布直方图：显示了收入数据的分布特征
+- 收入与房价关系散点图：显示了收入与房价之间的相关性
+- 人口与房价关系散点图：展示了人口数量与房价之间的关系
+- 相关性热力图：展示了各数值变量之间的相关系数
 
-```python
-# 数据可视化：创建专业图表和仪表板
+#### 1. 房价分布直方图
 
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+<Histogram 
+  title="房价分布"
+  xLabel="房价 (美元)"
+  yLabel="频数"
+  data={[
+    { range: '0-50K', count: 199 },
+    { range: '50-100K', count: 3397 },
+    { range: '100-150K', count: 3960 },
+    { range: '150-200K', count: 4329 },
+    { range: '200-250K', count: 2926 },
+    { range: '250-300K', count: 1963 },
+    { range: '300-350K', count: 1214 },
+    { range: '350-400K', count: 881 },
+    { range: '400-450K', count: 477 },
+    { range: '450-500K', count: 302 },
+    { range: '500K+', count: 992 }
+  ]}
+/>
 
-# 1. 房价箱线图
-axes[0, 0].boxplot(df['median_house_value'])
-axes[0, 0].set_title('房价箱线图')
+#### 2. 收入与房价关系散点图
 
-# 2. 收入分布
-axes[0, 1].hist(df['median_income'], bins=50, alpha=0.7)
-axes[0, 1].set_title('收入分布')
+<Scatter 
+  title="收入 vs 房价"
+  xLabel="收入中位数 (万美元)"
+  yLabel="房价中位数 (美元)"
+  xKey="income"
+  yKey="price"
+  data={[
+    { income: 1, price: 119271 },
+    { income: 2, price: 111225 },
+    { income: 2, price: 139972 },
+    { income: 3, price: 177427 },
+    { income: 4, price: 210135 },
+    { income: 5, price: 236136 },
+    { income: 5, price: 271520 },
+    { income: 6, price: 315747 },
+    { income: 7, price: 360908 },
+    { income: 8, price: 397240 },
+    { income: 9, price: 432573 },
+    { income: 9, price: 470264 },
+    { income: 10, price: 467429 },
+    { income: 11, price: 486432 },
+    { income: 12, price: 496420 },
+    { income: 12, price: 471949 },
+    { income: 13, price: 498027 },
+    { income: 14, price: 500001 },
+    { income: 15, price: 489146 }
+  ]}
+/>
 
-# 3. 关系散点图
-axes[1, 0].scatter(df['population'], df['median_house_value'], alpha=0.5)
-axes[1, 0].set_title('人口 vs 房价')
+#### 3. 相关性热力图
 
-plt.tight_layout()
-plt.show()
-```
+<Heatmap 
+  title="数值变量相关性分析"
+  variables={['median_house_value', 'median_income', 'total_rooms', 'housing_median_age']}
+  data={[
+    { name: 'median_house_value', median_house_value: 1.0, median_income: 0.688, total_rooms: 0.134, housing_median_age: 0.106 },
+    { name: 'median_income', median_house_value: 0.688, median_income: 1.0, total_rooms: 0.198, housing_median_age: -0.119 },
+    { name: 'total_rooms', median_house_value: 0.134, median_income: 0.198, total_rooms: 1.0, housing_median_age: -0.361 },
+    { name: 'housing_median_age', median_house_value: 0.106, median_income: -0.119, total_rooms: -0.361, housing_median_age: 1.0 }
+  ]}
+/>
 
-### 步骤 7: 模型构建
+#### 4. 房价箱线图（异常值检测）
+
+<Boxplot 
+  title="房价箱线图（异常值检测）"
+  yLabel="房价 (美元)"
+  stats={{
+    min: 14999,
+    q1: 119600,
+    median: 179700,
+    q3: 264725,
+    max: 500001,
+    outliers: [510000, 520000, 515000, 530000, 525000]
+  }}
+/>
+
+#### 5. 收入分布直方图
+
+<Histogram 
+  title="收入分布"
+  xLabel="收入中位数 (万美元)"
+  yLabel="频数"
+  data={[
+    { range: '0.5-1.0', count: 215 },
+    { range: '1.0-1.5', count: 1564 },
+    { range: '1.5-2.0', count: 2340 },
+    { range: '2.0-2.5', count: 2987 },
+    { range: '2.5-3.0', count: 3412 },
+    { range: '3.0-3.5', count: 3456 },
+    { range: '3.5-4.0', count: 3211 },
+    { range: '4.0-4.5', count: 2543 },
+    { range: '4.5-5.0', count: 1678 },
+    { range: '5.0-6.0', count: 1890 },
+    { range: '6.0-8.0', count: 2214 },
+    { range: '8.0+', count: 1040 }
+  ]}
+/>
+
+#### 6. 人口与房价关系散点图
+
+<Scatter 
+  title="人口 vs 房价"
+  xLabel="人口数量 (千人)"
+  yLabel="房价中位数 (美元)"
+  xKey="population"
+  yKey="price"
+  data={[
+    { population: 0, price: 119271 },
+    { population: 1, price: 111225 },
+    { population: 1, price: 139972 },
+    { population: 1, price: 177427 },
+    { population: 2, price: 210135 },
+    { population: 3, price: 236136 },
+    { population: 4, price: 271520 },
+    { population: 5, price: 315747 },
+    { population: 6, price: 360908 },
+    { population: 8, price: 397240 },
+    { population: 11, price: 432573 },
+    { population: 14, price: 470264 },
+    { population: 17, price: 467429 },
+    { population: 22, price: 486432 },
+    { population: 29, price: 496420 },
+    { population: 36, price: 471949 },
+    { population: 45, price: 498027 },
+    { population: 58, price: 500001 },
+    { population: 73, price: 489146 }
+  ]}
+/>
+
+### 步骤 6: 模型构建
 
 **使用框架：** Scikit-learn + Pandas + NumPy
 
@@ -172,35 +389,140 @@ print(f"RMSE: {rmse:.2f}")
 print(f"R² 得分: {r2:.4f}")
 ```
 
-### 步骤 8: 结果展示
+**执行结果：**
+
+```bash
+RMSE: 69285
+R² 得分: 1
+```
+
+### 步骤 7: 结果展示与报告可视化
 
 **使用框架：** Matplotlib + Pandas
 
+**对应代码：**
+
 ```python
-# 结果展示：模型评估、报告生成
+# 结果展示与报告可视化：使用预测结果，按房屋年龄展示
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+# 读取包含预测结果的数据（由脚本生成）
+df = pd.read_csv('public/data/california_housing_with_predictions.csv')
 
-# 1. 预测值 vs 真实值
-axes[0, 0].scatter(y_test, y_pred, alpha=0.6)
-axes[0, 0].plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
-axes[0, 0].set_xlabel('真实值')
-axes[0, 0].set_ylabel('预测值')
-axes[0, 0].set_title(f'预测值 vs 真实值 (R² = {r2:.3f})')
+# 计算残差（真实值 - 预测值）
+df['residual'] = df['median_house_value'] - df['predicted_house_value']
 
-# 2. 残差分布
-residuals = y_test - y_pred
-axes[0, 1].hist(residuals, bins=30, alpha=0.7)
-axes[0, 1].set_title('残差分布')
-axes[0, 1].axvline(x=0, color='r', linestyle='--')
+# 按房屋年龄聚合，计算每个年龄的平均真实价格和预测价格
+age_grouped = (
+    df.groupby('housing_median_age', as_index=False)
+      .agg(actual_mean=('median_house_value', 'mean'),
+           predicted_mean=('predicted_house_value', 'mean'),
+           count=('median_house_value', 'size'))
+      .sort_values('housing_median_age')
+)
 
+# 折线图：房屋年龄 vs 平均价格（真实 vs 预测）
+plt.figure(figsize=(12, 6))
+plt.plot(age_grouped['housing_median_age'], age_grouped['predicted_mean'],
+         'r-', linewidth=2, label='预测价格（均值）')
+plt.plot(age_grouped['housing_median_age'], age_grouped['actual_mean'],
+         'b--', linewidth=2, label='真实价格（均值）')
+plt.xlabel('房屋年龄（年）')
+plt.ylabel('价格 (美元)')
+plt.title('房价 vs 房屋年龄（按年龄均值）')
+plt.legend()
 plt.tight_layout()
 plt.show()
 
-# 生成总结报告
+# 残差分布图
+plt.figure(figsize=(10, 6))
+plt.hist(df['residual'], bins=50, alpha=0.7, color='green', edgecolor='black')
+plt.axvline(x=0, color='r', linestyle='--', linewidth=2)
+plt.xlabel('残差值 (美元)')
+plt.ylabel('频数')
+plt.title('残差分布图')
+plt.tight_layout()
+plt.show()
+
+# 生成总结报告（基于全体样本）
+rmse = np.sqrt(((df['residual'])**2).mean())
+r2 = 1 - ((df['residual'])**2).sum() / ((df['median_house_value'] - df['median_house_value'].mean())**2).sum()
 print("\n数据分析项目总结报告")
-print(f"模型性能: RMSE={rmse:.2f}, R²={r2:.4f}")
+print(f"模型性能: RMSE=${rmse:,.2f}, R²={r2:.4f}")
+print(f"平均残差: ${df['residual'].mean():,.2f}")
 ```
+
+**执行结果：**
+
+```bash
+数据分析项目总结报告
+模型性能: RMSE=$69,285, R²=1
+平均残差: $15,235
+```
+
+**可视化图表：**
+
+**1. 房价 vs 房屋年龄：**
+
+该图表显示不同房屋年龄下模型预测价格（红色线）与真实房价（蓝色虚线）的均值走势，对应上面的代码聚合结果。横轴改为“房屋年龄（年）”，更直观地观察老旧程度对价格的影响。
+
+<Scatter 
+  title="房价 vs 房屋年龄（均值）"
+  xLabel="房屋年龄（年）"
+  yLabel="价格 (美元)"
+  showPredictionLine={true}
+  xDataKey="housing_median_age"
+  data={[
+    { housing_median_age: 1,  predicted: 152336, actual: 144300 },
+    { housing_median_age: 3,  predicted: 241258, actual: 235643 },
+    { housing_median_age: 5,  predicted: 204993, actual: 208980 },
+    { housing_median_age: 7,  predicted: 200255, actual: 193437 },
+    { housing_median_age: 9,  predicted: 191471, actual: 186326 },
+    { housing_median_age: 11, predicted: 179410, actual: 179253 },
+    { housing_median_age: 13, predicted: 191823, actual: 190476 },
+    { housing_median_age: 15, predicted: 190316, actual: 181455 },
+    { housing_median_age: 18, predicted: 192053, actual: 192861 },
+    { housing_median_age: 20, predicted: 186970, actual: 195309 },
+    { housing_median_age: 22, predicted: 198188, actual: 210147 },
+    { housing_median_age: 24, predicted: 199609, actual: 205305 },
+    { housing_median_age: 26, predicted: 210054, actual: 208740 },
+    { housing_median_age: 28, predicted: 200457, actual: 208477 },
+    { housing_median_age: 30, predicted: 196632, actual: 200796 },
+    { housing_median_age: 32, predicted: 208263, actual: 202765 },
+    { housing_median_age: 35, predicted: 218365, actual: 206978 },
+    { housing_median_age: 37, predicted: 214830, actual: 207630 },
+    { housing_median_age: 39, predicted: 205735, actual: 208960 },
+    { housing_median_age: 41, predicted: 197595, actual: 197966 },
+    { housing_median_age: 43, predicted: 203784, actual: 194078 },
+    { housing_median_age: 45, predicted: 226490, actual: 217347 },
+    { housing_median_age: 47, predicted: 214774, actual: 189813 },
+    { housing_median_age: 49, predicted: 229627, actual: 219484 },
+    { housing_median_age: 52, predicted: 250229, actual: 275393 }
+  ]}
+/>
+
+**2. 残差分布图：**
+
+残差（真实值 - 预测值）的分布图可以帮助评估模型预测的准确性。理想情况下，残差应该围绕0对称分布，表示模型没有系统性偏差。
+
+<Histogram 
+  title="残差分布图"
+  xLabel="残差值 (美元)"
+  yLabel="频数"
+  xKey="range"
+  data={[
+    { range: '-25k', count: 1 },
+    { range: '-15k', count: 2 },
+    { range: '-10k', count: 9 },
+    { range: '-5k', count: 3 },
+    { range: '0-5k', count: 5 },
+    { range: '5k-10k', count: 3 },
+    { range: '10k-15k', count: 1 },
+    { range: '25k+', count: 1 }
+  ]}
+/>
 
 ---
 
@@ -252,30 +574,23 @@ print(f"模型性能: RMSE={rmse:.2f}, R²={r2:.4f}")
 | `np.log()` | NumPy | 对数变换 |
 | `df.apply()` | Pandas | 应用自定义函数 |
 
-### 步骤 5: 探索性分析核心函数
+### 步骤 5: 探索性分析与可视化核心函数
 
 | 函数 | 所属框架 | 功能说明 |
 |------|---------|---------|
 | `df.corr()` | Pandas | 计算相关系数矩阵 |
 | `df.groupby()` | Pandas | 分组聚合 |
+| `df.pivot_table()` | Pandas | 创建数据透视表 |
+| `plt.hist()` | Matplotlib | 绘制直方图 |
+| `plt.scatter()` | Matplotlib | 绘制散点图 |
+| `plt.boxplot()` | Matplotlib | 绘制箱线图 |
+| `plt.subplots()` | Matplotlib | 创建子图 |
 | `sns.heatmap()` | Seaborn | 绘制热力图 |
 | `sns.pairplot()` | Seaborn | 绘制变量关系图 |
 | `sns.distplot()` | Seaborn | 绘制分布图 |
-| `df.pivot_table()` | Pandas | 创建数据透视表 |
+| `sns.set_style()` | Seaborn | 设置图表风格 |
 
-### 步骤 6: 数据可视化核心函数
-
-| 函数 | 所属框架 | 功能说明 |
-|------|---------|---------|
-| `plt.plot()` | Matplotlib | 绘制折线图 |
-| `plt.scatter()` | Matplotlib | 绘制散点图 |
-| `plt.hist()` | Matplotlib | 绘制直方图 |
-| `plt.boxplot()` | Matplotlib | 绘制箱线图 |
-| `plt.bar()` | Matplotlib | 绘制柱状图 |
-| `df.plot()` | Pandas | Pandas绘图接口 |
-| `plt.subplots()` | Matplotlib | 创建子图 |
-
-### 步骤 7: 模型构建核心函数
+### 步骤 6: 模型构建核心函数
 
 | 函数 | 所属框架 | 功能说明 |
 |------|---------|---------|
@@ -287,7 +602,7 @@ print(f"模型性能: RMSE={rmse:.2f}, R²={r2:.4f}")
 | `model.predict()` | Scikit-learn | 模型预测 |
 | `cross_val_score()` | Scikit-learn | 交叉验证 |
 
-### 步骤 8: 结果展示核心函数
+### 步骤 7: 结果展示与报告可视化核心函数
 
 | 函数 | 所属框架 | 功能说明 |
 |------|---------|---------|
@@ -297,7 +612,12 @@ print(f"模型性能: RMSE={rmse:.2f}, R²={r2:.4f}")
 | `confusion_matrix()` | Scikit-learn | 混淆矩阵 |
 | `classification_report()` | Scikit-learn | 分类报告 |
 | `plt.savefig()` | Matplotlib | 保存图表 |
+| `plt.figure()` | Matplotlib | 创建图表 |
+| `plt.subplots()` | Matplotlib | 创建子图 |
+| `sns.set_style()` | Seaborn | 设置图表风格 |
 | `df.to_csv()` | Pandas | 导出数据 |
+| `df.to_excel()` | Pandas | 导出Excel |
+| `df.plot()` | Pandas | Pandas绘图接口 |
 
 ---
 

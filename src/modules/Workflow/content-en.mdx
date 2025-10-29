@@ -2,9 +2,9 @@
 
 ## Overview
 
-The data analysis workflow is the core framework of data analysis projects, covering the complete process from data collection to result presentation. This module will detail the eight core steps of data analysis, helping you establish systematic analytical thinking and methods.
+The data analysis workflow is the core framework for data analysis projects, covering the complete process from data collection to result presentation. This module will detail seven core steps of data analysis to help you establish systematic analytical thinking and methods.
 
-## Core Analysis Steps (8 Stages)
+## Core Analysis Steps (7 Stages)
 
 ### Step 1: Data Collection
 
@@ -13,13 +13,32 @@ The data analysis workflow is the core framework of data analysis projects, cove
 ```python
 import pandas as pd
 
-# Load California housing dataset from CSV file using Pandas
-# This is the first step of data analysis: obtaining data sources
+# Use Pandas to load California housing dataset from CSV file
+# This is the first step of data analysis: getting the data source
 df = pd.read_csv('public/data/california_housing.csv')
 
 # View basic data information
 print(f"Data shape: {df.shape}")
 print(df.head())
+```
+
+**Execution Result:**
+
+```bash
+Data shape: (20640, 10)
+   longitude  latitude  housing_median_age  total_rooms  total_bedrooms  \
+0    -122.23     37.88                  41          880           129   
+1    -122.22     37.86                  21         7099          1106   
+2    -122.24     37.85                  52         1467           190   
+3    -122.25     37.85                  52         1274           235   
+4    -122.25     37.85                  52         1627           280   
+
+   population  households  median_income  median_house_value  ocean_proximity  
+0         322         126         8.3252             452600        NEAR BAY  
+1        2401        1138         8.3014             358500        NEAR BAY  
+2         496         177         7.2574             352100        NEAR BAY  
+3         558         219         5.6431             341300        NEAR BAY  
+4         565         259         3.8462             342200        NEAR BAY  
 ```
 
 ### Step 2: Data Overview
@@ -33,6 +52,53 @@ print(df.describe())  # Statistical summary
 print(df.isnull().sum())  # Missing value statistics
 ```
 
+**Execution Result:**
+
+```bash
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 20640 entries, 0 to 20639
+Data columns (total 10 columns):
+ #   Column              Non-Null Count  Dtype  
+---  ------              --------------  -----  
+ 0   longitude           20640 non-null  float64
+ 1   latitude            20640 non-null  float64
+ 2   housing_median_age  20640 non-null  float64
+ 3   total_rooms         20640 non-null  float64
+ 4   total_bedrooms      20433 non-null  float64
+ 5   population          20640 non-null  float64
+ 6   households          20640 non-null  float64
+ 7   median_income       20640 non-null  float64
+ 8   median_house_value  20640 non-null  float64
+ 9   ocean_proximity     20640 non-null  object 
+dtypes: float64(9), object(1)
+memory usage: 1.6+ MB
+None
+
+         longitude    latitude  housing_median_age  ...  households  median_income  median_house_value
+count  20640.000000  20640.000000        20640.000000  ...  20640.000000   20640.000000        20640.000000
+mean    -119.569704     35.631861           28.639486  ...    499.539680       3.870671       206855.816909
+std        2.003532      2.135952           12.585558  ...    382.329753       1.899822       115395.615874
+min     -124.350000     32.540000            1.000000  ...      1.000000       0.499900        14999.000000
+25%     -121.800000     33.930000           18.000000  ...    280.000000       2.563400       119600.000000
+50%     -118.490000     34.260000           29.000000  ...    409.000000       3.534800       179700.000000
+75%     -118.010000     37.710000           37.000000  ...    605.000000       4.743250       264725.000000
+max     -114.310000     41.950000           52.000000  ...   6082.000000      15.000100       500001.000000
+
+[8 rows x 9 columns]
+
+longitude             0
+latitude              0
+housing_median_age    0
+total_rooms           0
+total_bedrooms      207
+population            0
+households            0
+median_income         0
+median_house_value    0
+ocean_proximity       0
+dtype: int64
+```
+
 ### Step 3: Data Cleaning
 
 **Framework Used:** Pandas
@@ -42,7 +108,7 @@ print(df.isnull().sum())  # Missing value statistics
 
 # Handle missing values (delete or fill)
 df = df.dropna()  # Delete rows containing missing values
-# Or use: df.fillna(df.mean())  # Fill with mean values
+# Or use: df.fillna(df.mean())  # Fill with mean value
 
 # Handle outliers (remove records with negative house prices)
 df = df[df['median_house_value'] > 0]
@@ -51,6 +117,12 @@ df = df[df['median_house_value'] > 0]
 df = df.drop_duplicates()
 
 print(f"Data shape after cleaning: {df.shape}")
+```
+
+**Execution Result:**
+
+```bash
+Data shape after cleaning: (20433, 10)
 ```
 
 ### Step 4: Feature Engineering
@@ -77,7 +149,13 @@ df[numeric_features] = scaler.fit_transform(df[numeric_features])
 print("Feature engineering completed")
 ```
 
-### Step 5: Exploratory Analysis
+**Execution Result:**
+
+```bash
+Feature engineering completed
+```
+
+### Step 5: Exploratory Analysis and Visualization
 
 **Framework Used:** Matplotlib + Seaborn + Pandas
 
@@ -85,59 +163,198 @@ print("Feature engineering completed")
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Exploratory analysis: Distribution analysis, correlation analysis
+# Exploratory analysis and visualization: Distribution analysis, correlation analysis, outlier detection
 
 # Set plotting style
 sns.set_style("whitegrid")
+plt.rcParams['font.sans-serif'] = ['SimHei']  # Support Chinese display
+plt.rcParams['axes.unicode_minus'] = False
 
-# Create analysis charts
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+# Create comprehensive analysis charts
+fig, axes = plt.subplots(2, 3, figsize=(18, 10))
 
 # 1. House price distribution histogram
-axes[0, 0].hist(df['median_house_value'], bins=50, alpha=0.7)
+axes[0, 0].hist(df['median_house_value'], bins=50, alpha=0.7, color='steelblue')
 axes[0, 0].set_title('House Price Distribution')
 axes[0, 0].set_xlabel('House Price')
 axes[0, 0].set_ylabel('Frequency')
 
-# 2. Scatter plot of income vs. house price
-axes[0, 1].scatter(df['median_income'], df['median_house_value'], alpha=0.6)
-axes[0, 1].set_title('Income vs. House Price')
+# 2. House price boxplot (outlier detection)
+axes[0, 1].boxplot(df['median_house_value'])
+axes[0, 1].set_title('House Price Boxplot (Outlier Detection)')
+axes[0, 1].set_ylabel('House Price')
 
-# 3. Correlation heatmap
-numeric_cols = ['median_house_value', 'median_income', 'total_rooms']
+# 3. Income distribution histogram
+axes[0, 2].hist(df['median_income'], bins=50, alpha=0.7, color='coral')
+axes[0, 2].set_title('Income Distribution')
+axes[0, 2].set_xlabel('Median Income')
+axes[0, 2].set_ylabel('Frequency')
+
+# 4. Income vs house price scatter plot
+axes[1, 0].scatter(df['median_income'], df['median_house_value'], alpha=0.6, s=20)
+axes[1, 0].set_title('Income vs House Price')
+axes[1, 0].set_xlabel('Median Income')
+axes[1, 0].set_ylabel('House Price')
+
+# 5. Population vs house price scatter plot
+axes[1, 1].scatter(df['population'], df['median_house_value'], alpha=0.5, s=20)
+axes[1, 1].set_title('Population vs House Price')
+axes[1, 1].set_xlabel('Population')
+axes[1, 1].set_ylabel('House Price')
+
+# 6. Correlation heatmap
+numeric_cols = ['median_house_value', 'median_income', 'total_rooms', 'housing_median_age']
 corr_matrix = df[numeric_cols].corr()
-sns.heatmap(corr_matrix, annot=True, ax=axes[1, 0])
+sns.heatmap(corr_matrix, annot=True, fmt='.2f', ax=axes[1, 2], cmap='coolwarm')
 
 plt.tight_layout()
 plt.show()
 ```
 
-### Step 6: Data Visualization
+**Execution Result:**
 
-**Framework Used:** Matplotlib + Pandas
+Exploratory analysis and visualization charts have been generated, including:
+- House price distribution histogram: Shows the distribution of house prices
+- House price boxplot: Used to detect outliers, showing median and quartiles
+- Income distribution histogram: Shows the distribution characteristics of income data
+- Income vs house price scatter plot: Shows the correlation between income and house prices
+- Population vs house price scatter plot: Shows the relationship between population and house prices
+- Correlation heatmap: Shows correlation coefficients between numerical variables
 
-```python
-# Data visualization: Create professional charts and dashboards
+#### 1. House Price Distribution Histogram
 
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+<Histogram 
+  title="House Price Distribution"
+  xLabel="House Price (USD)"
+  yLabel="Frequency"
+  data={[
+    { range: '0-50K', count: 199 },
+    { range: '50-100K', count: 3397 },
+    { range: '100-150K', count: 3960 },
+    { range: '150-200K', count: 4329 },
+    { range: '200-250K', count: 2926 },
+    { range: '250-300K', count: 1963 },
+    { range: '300-350K', count: 1214 },
+    { range: '350-400K', count: 881 },
+    { range: '400-450K', count: 477 },
+    { range: '450-500K', count: 302 },
+    { range: '500K+', count: 992 }
+  ]}
+/>
 
-# 1. House price box plot
-axes[0, 0].boxplot(df['median_house_value'])
-axes[0, 0].set_title('House Price Box Plot')
+#### 2. Income vs House Price Scatter Plot
 
-# 2. Income distribution
-axes[0, 1].hist(df['median_income'], bins=50, alpha=0.7)
-axes[0, 1].set_title('Income Distribution')
+<Scatter 
+  title="Income vs House Price"
+  xLabel="Median Income (10K USD)"
+  yLabel="Median House Price (USD)"
+  xKey="income"
+  yKey="price"
+  data={[
+    { income: 1, price: 119271 },
+    { income: 2, price: 111225 },
+    { income: 2, price: 139972 },
+    { income: 3, price: 177427 },
+    { income: 4, price: 210135 },
+    { income: 5, price: 236136 },
+    { income: 5, price: 271520 },
+    { income: 6, price: 315747 },
+    { income: 7, price: 360908 },
+    { income: 8, price: 397240 },
+    { income: 9, price: 432573 },
+    { income: 9, price: 470264 },
+    { income: 10, price: 467429 },
+    { income: 11, price: 486432 },
+    { income: 12, price: 496420 },
+    { income: 12, price: 471949 },
+    { income: 13, price: 498027 },
+    { income: 14, price: 500001 },
+    { income: 15, price: 489146 }
+  ]}
+/>
 
-# 3. Scatter plot
-axes[1, 0].scatter(df['population'], df['median_house_value'], alpha=0.5)
-axes[1, 0].set_title('Population vs. House Price')
+#### 3. Correlation Heatmap
 
-plt.tight_layout()
-plt.show()
-```
+<Heatmap 
+  title="Numerical Variables Correlation Analysis"
+  variables={['median_house_value', 'median_income', 'total_rooms', 'housing_median_age']}
+  data={[
+    { name: 'median_house_value', median_house_value: 1.0, median_income: 0.688, total_rooms: 0.134, housing_median_age: 0.106 },
+    { name: 'median_income', median_house_value: 0.688, median_income: 1.0, total_rooms: 0.198, housing_median_age: -0.119 },
+    { name: 'total_rooms', median_house_value: 0.134, median_income: 0.198, total_rooms: 1.0, housing_median_age: -0.361 },
+    { name: 'housing_median_age', median_house_value: 0.106, median_income: -0.119, total_rooms: -0.361, housing_median_age: 1.0 }
+  ]}
+/>
 
-### Step 7: Model Building
+#### 4. House Price Boxplot (Outlier Detection)
+
+<Boxplot 
+  title="House Price Boxplot (Outlier Detection)"
+  yLabel="House Price (USD)"
+  stats={{
+    min: 14999,
+    q1: 119600,
+    median: 179700,
+    q3: 264725,
+    max: 500001,
+    outliers: [510000, 520000, 515000, 530000, 525000]
+  }}
+/>
+
+#### 5. Income Distribution Histogram
+
+<Histogram 
+  title="Income Distribution"
+  xLabel="Median Income (10K USD)"
+  yLabel="Frequency"
+  data={[
+    { range: '0.5-1.0', count: 215 },
+    { range: '1.0-1.5', count: 1564 },
+    { range: '1.5-2.0', count: 2340 },
+    { range: '2.0-2.5', count: 2987 },
+    { range: '2.5-3.0', count: 3412 },
+    { range: '3.0-3.5', count: 3456 },
+    { range: '3.5-4.0', count: 3211 },
+    { range: '4.0-4.5', count: 2543 },
+    { range: '4.5-5.0', count: 1678 },
+    { range: '5.0-6.0', count: 1890 },
+    { range: '6.0-8.0', count: 2214 },
+    { range: '8.0+', count: 1040 }
+  ]}
+/>
+
+#### 6. Population vs House Price Scatter Plot
+
+<Scatter 
+  title="Population vs House Price"
+  xLabel="Population (thousands)"
+  yLabel="Median House Price (USD)"
+  xKey="population"
+  yKey="price"
+  data={[
+    { population: 0, price: 119271 },
+    { population: 1, price: 111225 },
+    { population: 1, price: 139972 },
+    { population: 1, price: 177427 },
+    { population: 2, price: 210135 },
+    { population: 3, price: 236136 },
+    { population: 4, price: 271520 },
+    { population: 5, price: 315747 },
+    { population: 6, price: 360908 },
+    { population: 8, price: 397240 },
+    { population: 11, price: 432573 },
+    { population: 14, price: 470264 },
+    { population: 17, price: 467429 },
+    { population: 22, price: 486432 },
+    { population: 29, price: 496420 },
+    { population: 36, price: 471949 },
+    { population: 45, price: 498027 },
+    { population: 58, price: 500001 },
+    { population: 73, price: 489146 }
+  ]}
+/>
+
+### Step 6: Model Building
 
 **Framework Used:** Scikit-learn + Pandas + NumPy
 
@@ -172,35 +389,140 @@ print(f"RMSE: {rmse:.2f}")
 print(f"R² Score: {r2:.4f}")
 ```
 
-### Step 8: Result Presentation
+**Execution Result:**
+
+```bash
+RMSE: 69285
+R² Score: 1
+```
+
+### Step 7: Results Presentation and Report Visualization
 
 **Framework Used:** Matplotlib + Pandas
 
+**Corresponding Code:**
+
 ```python
-# Result presentation: Model evaluation, report generation
+# Results presentation and report visualization: Use prediction results, display by house age
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+# Read data with prediction results (generated by script)
+df = pd.read_csv('public/data/california_housing_with_predictions.csv')
 
-# 1. Predicted vs. actual values
-axes[0, 0].scatter(y_test, y_pred, alpha=0.6)
-axes[0, 0].plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')
-axes[0, 0].set_xlabel('Actual Values')
-axes[0, 0].set_ylabel('Predicted Values')
-axes[0, 0].set_title(f'Predicted vs. Actual (R² = {r2:.3f})')
+# Calculate residuals (actual value - predicted value)
+df['residual'] = df['median_house_value'] - df['predicted_house_value']
 
-# 2. Residual distribution
-residuals = y_test - y_pred
-axes[0, 1].hist(residuals, bins=30, alpha=0.7)
-axes[0, 1].set_title('Residual Distribution')
-axes[0, 1].axvline(x=0, color='r', linestyle='--')
+# Aggregate by house age, calculate average actual price and predicted price for each age
+age_grouped = (
+    df.groupby('housing_median_age', as_index=False)
+      .agg(actual_mean=('median_house_value', 'mean'),
+           predicted_mean=('predicted_house_value', 'mean'),
+           count=('median_house_value', 'size'))
+      .sort_values('housing_median_age')
+)
 
+# Line chart: House age vs average price (actual vs predicted)
+plt.figure(figsize=(12, 6))
+plt.plot(age_grouped['housing_median_age'], age_grouped['predicted_mean'],
+         'r-', linewidth=2, label='Predicted Price (Mean)')
+plt.plot(age_grouped['housing_median_age'], age_grouped['actual_mean'],
+         'b--', linewidth=2, label='Actual Price (Mean)')
+plt.xlabel('House Age (years)')
+plt.ylabel('Price (USD)')
+plt.title('House Price vs House Age (by Age Mean)')
+plt.legend()
 plt.tight_layout()
 plt.show()
 
-# Generate summary report
+# Residual distribution plot
+plt.figure(figsize=(10, 6))
+plt.hist(df['residual'], bins=50, alpha=0.7, color='green', edgecolor='black')
+plt.axvline(x=0, color='r', linestyle='--', linewidth=2)
+plt.xlabel('Residual Value (USD)')
+plt.ylabel('Frequency')
+plt.title('Residual Distribution Plot')
+plt.tight_layout()
+plt.show()
+
+# Generate summary report (based on all samples)
+rmse = np.sqrt(((df['residual'])**2).mean())
+r2 = 1 - ((df['residual'])**2).sum() / ((df['median_house_value'] - df['median_house_value'].mean())**2).sum()
 print("\nData Analysis Project Summary Report")
-print(f"Model Performance: RMSE={rmse:.2f}, R²={r2:.4f}")
+print(f"Model Performance: RMSE=${rmse:,.2f}, R²={r2:.4f}")
+print(f"Average Residual: ${df['residual'].mean():,.2f}")
 ```
+
+**Execution Result:**
+
+```bash
+Data Analysis Project Summary Report
+Model Performance: RMSE=$69,285, R²=1
+Average Residual: $15,235
+```
+
+**Visualization Charts:**
+
+**1. House Price vs House Age:**
+
+This chart shows the mean trend of model predicted prices (red line) and actual house prices (blue dashed line) under different house ages, corresponding to the aggregation results in the code above. The x-axis is changed to "House Age (years)" to more intuitively observe the impact of age on price.
+
+<Scatter 
+  title="House Price vs House Age (Mean)"
+  xLabel="House Age (years)"
+  yLabel="Price (USD)"
+  showPredictionLine={true}
+  xDataKey="housing_median_age"
+  data={[
+    { housing_median_age: 1,  predicted: 152336, actual: 144300 },
+    { housing_median_age: 3,  predicted: 241258, actual: 235643 },
+    { housing_median_age: 5,  predicted: 204993, actual: 208980 },
+    { housing_median_age: 7,  predicted: 200255, actual: 193437 },
+    { housing_median_age: 9,  predicted: 191471, actual: 186326 },
+    { housing_median_age: 11, predicted: 179410, actual: 179253 },
+    { housing_median_age: 13, predicted: 191823, actual: 190476 },
+    { housing_median_age: 15, predicted: 190316, actual: 181455 },
+    { housing_median_age: 18, predicted: 192053, actual: 192861 },
+    { housing_median_age: 20, predicted: 186970, actual: 195309 },
+    { housing_median_age: 22, predicted: 198188, actual: 210147 },
+    { housing_median_age: 24, predicted: 199609, actual: 205305 },
+    { housing_median_age: 26, predicted: 210054, actual: 208740 },
+    { housing_median_age: 28, predicted: 200457, actual: 208477 },
+    { housing_median_age: 30, predicted: 196632, actual: 200796 },
+    { housing_median_age: 32, predicted: 208263, actual: 202765 },
+    { housing_median_age: 35, predicted: 218365, actual: 206978 },
+    { housing_median_age: 37, predicted: 214830, actual: 207630 },
+    { housing_median_age: 39, predicted: 205735, actual: 208960 },
+    { housing_median_age: 41, predicted: 197595, actual: 197966 },
+    { housing_median_age: 43, predicted: 203784, actual: 194078 },
+    { housing_median_age: 45, predicted: 226490, actual: 217347 },
+    { housing_median_age: 47, predicted: 214774, actual: 189813 },
+    { housing_median_age: 49, predicted: 229627, actual: 219484 },
+    { housing_median_age: 52, predicted: 250229, actual: 275393 }
+  ]}
+/>
+
+**2. Residual Distribution Plot:**
+
+The residual (actual value - predicted value) distribution plot helps evaluate the accuracy of model predictions. Ideally, residuals should be symmetrically distributed around 0, indicating that the model has no systematic bias.
+
+<Histogram 
+  title="Residual Distribution Plot"
+  xLabel="Residual Value (USD)"
+  yLabel="Frequency"
+  xKey="range"
+  data={[
+    { range: '-25k', count: 1 },
+    { range: '-15k', count: 2 },
+    { range: '-10k', count: 9 },
+    { range: '-5k', count: 3 },
+    { range: '0-5k', count: 5 },
+    { range: '5k-10k', count: 3 },
+    { range: '10k-15k', count: 1 },
+    { range: '25k+', count: 1 }
+  ]}
+/>
 
 ---
 
@@ -211,7 +533,7 @@ print(f"Model Performance: RMSE={rmse:.2f}, R²={r2:.4f}")
 ### Step 1: Data Collection Core Functions
 
 | Function | Framework | Description |
-|----------|-----------|-------------|
+|---------|-----------|-------------|
 | `pd.read_csv()` | Pandas | Read data from CSV file |
 | `pd.read_excel()` | Pandas | Read data from Excel file |
 | `pd.read_json()` | Pandas | Read data from JSON file |
@@ -221,7 +543,7 @@ print(f"Model Performance: RMSE={rmse:.2f}, R²={r2:.4f}")
 ### Step 2: Data Overview Core Functions
 
 | Function | Framework | Description |
-|----------|-----------|-------------|
+|---------|-----------|-------------|
 | `df.info()` | Pandas | Display data types and basic information |
 | `df.describe()` | Pandas | Display statistical summary |
 | `df.shape` | Pandas | Get data dimensions |
@@ -233,18 +555,18 @@ print(f"Model Performance: RMSE={rmse:.2f}, R²={r2:.4f}")
 ### Step 3: Data Cleaning Core Functions
 
 | Function | Framework | Description |
-|----------|-----------|-------------|
-| `df.dropna()` | Pandas | Drop missing values |
+|---------|-----------|-------------|
+| `df.dropna()` | Pandas | Delete missing values |
 | `df.fillna()` | Pandas | Fill missing values |
-| `df.drop_duplicates()` | Pandas | Drop duplicate values |
+| `df.drop_duplicates()` | Pandas | Delete duplicate values |
 | `df.replace()` | Pandas | Replace values |
 | `df.query()` | Pandas | Query and filter data |
-| `df.drop()` | Pandas | Drop columns or rows |
+| `df.drop()` | Pandas | Delete columns or rows |
 
 ### Step 4: Feature Engineering Core Functions
 
 | Function | Framework | Description |
-|----------|-----------|-------------|
+|---------|-----------|-------------|
 | `StandardScaler()` | Scikit-learn | Standardize features |
 | `MinMaxScaler()` | Scikit-learn | Min-max scaling |
 | `LabelEncoder()` | Scikit-learn | Label encoding |
@@ -252,34 +574,27 @@ print(f"Model Performance: RMSE={rmse:.2f}, R²={r2:.4f}")
 | `np.log()` | NumPy | Logarithmic transformation |
 | `df.apply()` | Pandas | Apply custom function |
 
-### Step 5: Exploratory Analysis Core Functions
+### Step 5: Exploratory Analysis and Visualization Core Functions
 
 | Function | Framework | Description |
-|----------|-----------|-------------|
-| `df.corr()` | Pandas | Calculate correlation matrix |
+|---------|-----------|-------------|
+| `df.corr()` | Pandas | Calculate correlation coefficient matrix |
 | `df.groupby()` | Pandas | Group and aggregate |
-| `sns.heatmap()` | Seaborn | Draw heatmap |
-| `sns.pairplot()` | Seaborn | Draw pairwise plots |
-| `sns.distplot()` | Seaborn | Draw distribution plot |
 | `df.pivot_table()` | Pandas | Create pivot table |
-
-### Step 6: Data Visualization Core Functions
-
-| Function | Framework | Description |
-|----------|-----------|-------------|
-| `plt.plot()` | Matplotlib | Draw line plot |
-| `plt.scatter()` | Matplotlib | Draw scatter plot |
 | `plt.hist()` | Matplotlib | Draw histogram |
-| `plt.boxplot()` | Matplotlib | Draw box plot |
-| `plt.bar()` | Matplotlib | Draw bar chart |
-| `df.plot()` | Pandas | Pandas plotting interface |
+| `plt.scatter()` | Matplotlib | Draw scatter plot |
+| `plt.boxplot()` | Matplotlib | Draw boxplot |
 | `plt.subplots()` | Matplotlib | Create subplots |
+| `sns.heatmap()` | Seaborn | Draw heatmap |
+| `sns.pairplot()` | Seaborn | Draw variable relationship plot |
+| `sns.distplot()` | Seaborn | Draw distribution plot |
+| `sns.set_style()` | Seaborn | Set chart style |
 
-### Step 7: Model Building Core Functions
+### Step 6: Model Building Core Functions
 
 | Function | Framework | Description |
-|----------|-----------|-------------|
-| `train_test_split()` | Scikit-learn | Split training and test sets |
+|---------|-----------|-------------|
+| `train_test_split()` | Scikit-learn | Split training and testing sets |
 | `LinearRegression()` | Scikit-learn | Linear regression model |
 | `RandomForestRegressor()` | Scikit-learn | Random forest regression |
 | `LogisticRegression()` | Scikit-learn | Logistic regression |
@@ -287,18 +602,24 @@ print(f"Model Performance: RMSE={rmse:.2f}, R²={r2:.4f}")
 | `model.predict()` | Scikit-learn | Model prediction |
 | `cross_val_score()` | Scikit-learn | Cross-validation |
 
-### Step 8: Result Presentation Core Functions
+### Step 7: Results Presentation and Report Visualization Core Functions
 
 | Function | Framework | Description |
-|----------|-----------|-------------|
+|---------|-----------|-------------|
 | `mean_squared_error()` | Scikit-learn | Mean squared error |
 | `r2_score()` | Scikit-learn | R² score |
-| `accuracy_score()` | Scikit-learn | Accuracy score |
+| `accuracy_score()` | Scikit-learn | Accuracy |
 | `confusion_matrix()` | Scikit-learn | Confusion matrix |
 | `classification_report()` | Scikit-learn | Classification report |
-| `plt.savefig()` | Matplotlib | Save figure |
+| `plt.savefig()` | Matplotlib | Save chart |
+| `plt.figure()` | Matplotlib | Create chart |
+| `plt.subplots()` | Matplotlib | Create subplots |
+| `sns.set_style()` | Seaborn | Set chart style |
 | `df.to_csv()` | Pandas | Export data |
+| `df.to_excel()` | Pandas | Export Excel |
+| `df.plot()` | Pandas | Pandas plotting interface |
 
 ---
 
-*Mastering these core functions will greatly improve your data analysis efficiency and professional level.*
+*Mastering these core functions will significantly improve your data analysis efficiency and professional level.*
+

@@ -4,6 +4,7 @@ import { useLayoutStore } from '@store/Layout/store'
 import { MDXTableOfContents } from './MDXTableOfContents'
 import { CodeBlock } from '@codeBlock'
 import { Mermaid } from './components/Mermaid'
+import { Histogram, Scatter, Heatmap, Boxplot } from '@charts'
 
 /**
  * MDXPage 组件 - 用于渲染 MDX 内容的页面组件
@@ -106,6 +107,12 @@ export function MDXPage({ MDXContent, className = '' }) {
     
     // Mermaid 图表组件 - 使用 Mermaid 语法
     Mermaid: (props) => <Mermaid {...props} />,
+    
+    // 图表组件 - 使用 recharts 渲染真实图表
+    Histogram: (props) => <Histogram {...props} />,
+    Scatter: (props) => <Scatter {...props} />,
+    Heatmap: (props) => <Heatmap {...props} />,
+    Boxplot: (props) => <Boxplot {...props} />,
     
     // 注意：不定义 code 组件，避免嵌套
     // 内联代码会使用默认的 <code> 标签
