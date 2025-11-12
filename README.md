@@ -1,163 +1,184 @@
-# Python Data Basics - 对比式数据处理教学平台
+# Python Data Basics – Comparative Data Processing Learning Platform
 
-## 项目简介
+## Project Overview
 
-本项目是一个**对比式 Python 数据处理教学平台**，旨在通过实际业务场景演示 Python 数据处理的核心流程。项目采用**渐进式学习**方式，从基础列表操作到高级数据分析，展示如何使用 List、NumPy、Pandas、Matplotlib 等基础库构建函数并完成完整的数据分析工作流。
+This project delivers a **comparative Python data processing learning platform** that walks learners through business-inspired scenarios and highlights the full data workflow. The curriculum embraces a **progressive learning** approach, starting with fundamental list operations and gradually introducing more advanced analytics powered by List, NumPy, Pandas, and Matplotlib.
 
-## 技术栈
+## Tech Stack
 
-### 前端技术栈
-- **React 18+** - 现代React框架，支持Hooks和并发特性
-- **Vite** - 快速的前端构建工具，提供热重载和快速构建
-- **Zustand** - 轻量级状态管理库，用于管理应用状态
-- **MDX** - Markdown + JSX，用于编写交互式文档
-- **Monaco Editor** - VS Code 同款代码编辑器，支持语法高亮和智能提示
-- **Tailwind CSS** - 原子化CSS框架，快速构建现代UI
-- **React Router** - 客户端路由管理
+### Front-End
+- **React 18+** – Modern UI framework with hooks and concurrent rendering support
+- **Vite** – Blazing-fast development server with hot reloading
+- **Zustand** – Lightweight, flexible state management
+- **MDX** – Markdown + JSX for interactive documentation
+- **Monaco Editor** – VS Code–style editor with Python syntax highlighting
+- **Tailwind CSS** – Utility-first styling for rapid UI development
+- **React Router** – Client-side routing
 
-## 项目结构
+## Project Structure
 
 ```
-src/
-├── common/                 # 通用配置
-│   ├── i18n.js            # 国际化配置
-│   └── modules/           # 通用模块
-│       ├── Layout/        # 布局组件
-│       ├── Charts/        # 图表组件
-│       ├── DataTable/     # 数据表格
-│       ├── CodeEditor/    # 代码编辑器
-│       └── MDX/           # MDX 相关组件
-├── modules/               # 对比式教学模块
-│   ├── Business/          # 模块1：业务目标与数据理解
-│   ├── DataTools/         # 模块2：Python数据处理工具学习
-│   ├── Visualization/     # 模块3：数据可视化工具学习
-│   └── Workflow/          # 模块4：完整数据分析流程实战
-├── App.jsx                # 应用入口
-├── main.jsx               # 应用启动
-└── index.css              # Tailwind CSS 全局样式入口
+.
+├── dist/                        # Production build output
+│   ├── assets/                  # Bundled JavaScript, CSS, and maps
+│   └── data/                    # Preprocessed datasets for demo mode
+├── docs/
+│   └── ARCHITECTURE.md          # High-level design documentation
+├── public/
+│   ├── 404.html                 # Static not-found page
+│   └── data/                    # Source CSV files served in dev/prod
+├── scripts/
+│   └── generate_predictions.py  # Helper script used during content prep
+├── src/
+│   ├── App.jsx                  # Application shell and route layout
+│   ├── index.css                # Tailwind CSS entry point
+│   ├── main.jsx                 # Client bootstrap (React + Router)
+│   ├── common/
+│   │   ├── i18n.jsx             # Shared internationalization setup
+│   │   ├── modules/
+│   │   │   ├── Charts/          # Chart primitives (box plot, histogram, etc.)
+│   │   │   ├── CodeBlock/       # MDX-aware code snippets with highlighting
+│   │   │   ├── DataTable/       # Reusable data table with pagination
+│   │   │   ├── Elements/        # Shared UI atoms (buttons, typography)
+│   │   │   ├── Layout/          # Header, sidebar, layout scaffolding
+│   │   │   ├── MDX/             # MDX renderer, ToC, and routing helpers
+│   │   │   └── PythonChart/     # Interactive Python chart runner
+│   │   └── utils/
+│   │       └── dataLoader.jsx   # Data fetching utilities
+│   └── modules/
+│       ├── Business/            # Module 1: Business goals & data understanding
+│       ├── DataTools/           # Module 2: Python tooling deep dive
+│       ├── Visualization/       # Module 3: Visualization techniques
+│       └── Workflow/            # Module 4: End-to-end analytics workflow
+├── package.json
+├── package-lock.json
+├── postcss.config.js            # Tailwind + PostCSS configuration
+├── tailwind.config.js           # Tailwind theme settings
+├── vite.config.js               # Vite configuration
+└── README.md
 ```
 
-## 模块内容
+## Module Overview
 
-### 模块1: 业务目标与数据理解
-- 1.1 业务目标: 加利福尼亚房产价格预测
-- 1.2 CSV数据概览  
-- 1.3 业务价值体现
+### Module 1 – Business Goals & Data Understanding
+- 1.1 Business objective: California housing price prediction
+- 1.2 CSV dataset exploration
+- 1.3 Business value discussion
 
-### 模块2: Python数据处理工具学习
-- 2.1 三框架对比引入 (List vs NumPy vs Pandas)
-- 2.2 CSV处理核心技能
-- 2.3 List 深入详解
-- 2.4 NumPy 深入详解
-- 2.5 Pandas 深入详解
+### Module 2 – Python Data Tooling
+- 2.1 Framework comparison (List vs. NumPy vs. Pandas)
+- 2.2 Core CSV wrangling techniques
+- 2.3 Deep dive: List operations
+- 2.4 Deep dive: NumPy workflows
+- 2.5 Deep dive: Pandas pipelines
 
-### 模块3: 数据可视化工具学习
-- 3.1 可视化库对比引入 (Matplotlib vs Seaborn)
-- 3.2 Matplotlib 深入详解
-- 3.3 Seaborn 深入详解
+### Module 3 – Data Visualization
+- 3.1 Library comparison (Matplotlib vs. Seaborn)
+- 3.2 Deep dive: Matplotlib
+- 3.3 Deep dive: Seaborn
 
-### 模块4: 完整数据分析流程实战
-- 4.1 流程步骤详解 (8步完整流程)
-- 4.2 工具整合应用
-- 4.3 结果展示分析
+### Module 4 – End-to-End Workflow
+- 4.1 Eight-step analytics process
+- 4.2 Toolchain integration
+- 4.3 Results presentation and analysis
 
-## 快速开始
+## Quick Start
 
-### 安装依赖
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 启动开发服务器
+### Run the Dev Server
 
 ```bash
 npm run dev
 ```
 
-### 构建生产版本
+### Build for Production
 
 ```bash
 npm run build
 ```
 
-### 预览生产版本
+### Preview the Production Build
 
 ```bash
 npm run preview
 ```
 
-## 设计特色
+## Design Principles
 
-### 亚岗昆学院风格设计
-- 专业、现代、教育导向的界面设计
-- 学院品牌色彩搭配（绿色#00A651、深绿色#006633、白色为主）
-- 简洁的几何设计，适度的阴影效果
-- 清晰的信息层次和导航结构
-- 响应式布局，适配多种设备
-- 支持深色/浅色主题切换
+### Algonquin College visual language
+- Professional, modern, education-first interface
+- Brand colors: green `#00A651`, deep green `#006633`, white as base
+- Clean geometric shapes with subtle shadows
+- Clear information hierarchy and navigation
+- Responsive layouts across device sizes
+- Light and dark mode support
 
-### 响应式布局系统
-- 移动端: < 768px
-- 平板端: 768px - 1024px  
-- 桌面端: ≥ 1024px
+### Responsive Layout Breakpoints
+- Mobile: `< 768px`
+- Tablet: `768px – 1024px`
+- Desktop: `≥ 1024px`
 
-### 国际化支持
-- 支持中文和英文
-- 每个模块独立的国际化资源管理
-- 动态语言切换
+### Internationalization
+- English and Chinese localization
+- Module-specific language bundles
+- Runtime language switching
 
-## 核心功能
+## Core Features
 
-### 交互式代码编辑器
-- Monaco Editor集成
-- Python语法高亮
-- 代码执行功能
-- 实时输出显示
+### Interactive Code Editor
+- Monaco Editor integration
+- Python syntax highlighting
+- Inline code execution
+- Live output panel
 
-### 数据可视化
-- 多种图表类型支持
-- 交互式图表组件
-- 响应式图表设计
-- 主题适配
+### Data Visualization
+- Multiple chart types
+- Interactive chart components
+- Responsive by design
+- Theme-aware rendering
 
-### 数据表格
-- 分页功能
-- 排序和过滤
-- 响应式设计
-- 深色模式支持
+### Data Tables
+- Pagination controls
+- Sorting and filtering
+- Responsive layout
+- Dark mode support
 
-### MDX内容渲染
-- Markdown + JSX混合内容
-- 自定义组件支持
-- 代码高亮
-- 交互式演示
+### MDX-Powered Content
+- Hybrid Markdown + JSX authoring
+- Custom component injection
+- Code highlighting
+- Interactive walkthroughs
 
-## 项目约束
+## Project Constraints
 
-**本项目不包含以下内容：**
-- ❌ 测试代码
-- ❌ 代码检查工具
-- ❌ 代码格式化工具
-- ❌ 类型检查工具
-- ❌ 代码质量工具
+**Intentionally excluded from this project:**
+- ❌ Automated tests
+- ❌ Linting tools
+- ❌ Code formatters
+- ❌ Type checkers
+- ❌ Static analysis tooling
 - ❌ TypeScript
 
-## 浏览器支持
+## Browser Support
 
-- Chrome (推荐)
+- Chrome (recommended)
 - Firefox
 - Safari
 - Edge
 
-## 许可证
+## License
 
 MIT License
 
-## 贡献指南
+## Contributing
 
-欢迎提交Issue和Pull Request来改进项目。
+Contributions are welcome—feel free to open issues or submit pull requests.
 
-## 联系方式
+## Contact
 
-如有问题或建议，请通过Issue联系我们。
+For questions or suggestions, please file an issue in the repository.
